@@ -1,153 +1,124 @@
 local pickers = require "telescope.pickers"
 local finders = require "telescope.finders"
-local utils = require "telescope.utils"
+local tele_utils = require "telescope.utils"
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
-local sqlite = require "sqlite"
-local sqlite_uri = "/tmp/sapi_nvim_history.sqlite3"
 local ts_utils = require "nvim-treesitter.ts_utils"
-
 local conf = require("telescope.config").values
-local endpoints = {}
+local utils = require("sapi-preview.utils")
+local curl = require("sapi-preview.curl")
+local db = require("sapi-preview.db")
+local fetch = require("sapi-preview.fetch")
 
-local sapi = {}
-local sapi_config = {
-  package = "soccer-europe/v3/en",
-  base_url = "http://localhost:8061"
+local M = {}
+local default = {
+  package = 'soccer-europe/v3/en',
+  base_url = 'http://localhost:8061',
 }
 
-local function ends_with(str, ending)
-  return ending == "" or str:sub(-#ending) == ending
-end
-
-local function checkhealth()
-  local has_sql, _ = pcall(require, "sqlite")
-  if has_sql then
-    vim.health.report_ok "sql.nvim installed."
-  else
-    vim.health.report_error "Need sql.vim to be installed."
-  end
-end
-
-local db = sqlite {
-  uri = sqlite_uri,
-  entries = {
-    id = true,
-    url = "text",
-    last_used = { "timestamp", default = sqlite.lib.strftime("%s", "now") }
-  },
+local endpoints = {
 }
 
-local function split_lines(body)
-  local body_lines = {}
-  for s in body:gmatch("[^\r\n]+") do
-    table.insert(body_lines, s)
-  end
-  return body_lines
-end
-
-local function split_regex(ptn)
-  local ptns = {}
-  local size = 0
-  for p in ptn:gmatch("[^|]+") do
-    size = size + 1
-    table.insert(ptns, p)
-  end
-  if size == 0 then
-    table.insert(ptns, ptn)
-  end
-  return ptns
-end
-
-local function insert_or_update(fetchUrl)
-  local existing = db.entries:where { url = fetchUrl }
-  if existing == nil then
-    db.entries:insert { url = fetchUrl }
-  else
-    local ts = os.time(os.date("!*t"))
-    db.entries:update {
-      where = { id = existing.id },
-      set = { last_used = ts }
-    }
-  end
-end
-
-local function fetch_and_display(fetchUrl, opts)
+M.setup = function(opts)
   opts = opts or {}
 
-  insert_or_update(fetchUrl)
-  print("Fetching " .. fetchUrl)
-
-  local curl = require"plenary.curl"
-  local res = curl.get(fetchUrl)
-
-  -- if res.status ~= 200 then
-  --   error("Status was not 200 - " .. res.status)
-  --   return
-  -- end
-
-  local body_lines = split_lines(res.body)
-
-  vim.api.nvim_command('botright vnew')
-
-  local buf = vim.api.nvim_get_current_buf()
-
-  vim.api.nvim_buf_set_name(buf, 'fetched ' .. fetchUrl)
-  vim.api.nvim_buf_set_option(buf, 'buftype', 'nofile')
-  vim.api.nvim_buf_set_option(buf, 'swapfile', false)
-  vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')
-
-  if ends_with(fetchUrl, '.xml') then
-    vim.api.nvim_buf_set_option(buf, 'filetype', 'xml')
+  M.options = {}
+  for k, v in pairs(default) do
+    M.options[k] = v
   end
 
-  if ends_with(fetchUrl, '.json') then
-    vim.api.nvim_buf_set_option(buf, 'filetype', 'json')
+  for k, v in pairs(opts) do
+    M.options[k] = v
   end
-
-  vim.api.nvim_put(body_lines, "", true, false)
 end
 
-local function map(maptbl, f)
-  local t = {}
-  for k, v in pairs(maptbl) do
-    t[k] = f(v)
+local packages = {}
+M.update_packages = function(opts)
+  opts = opts or {}
+
+  local routes_url = M.options.base_url .. "/routes.json"
+  local curl_result = curl.fetch(routes_url, {})
+  local body = vim.fn.json_decode(curl_result.body)
+
+  for key, value in pairs(body.routes) do
+    if value.defaults ~= nil and value.defaults.package_version ~= nil and value.defaults.package_version ~= "" and value.defaults.package_version ~= vim.NIL then
+      table.insert(packages, {name = value.defaults.package_name, version = value.defaults.package_version})
+    end
   end
-  return t
 end
 
-sapi.endpoint_with_urn = function(opts)
+M.select_package = function(opts)
+  opts = opts or {}
+
+  if next(packages) == nil then
+    M.update_packages()
+  end
+
+  pickers.new(opts, {
+    prompt_title = "Select a package",
+    finder = finders.new_table {
+      results = packages,
+      entry_maker = function(entry)
+        return {
+          value = entry,
+          display = entry.name .. " " .. entry.version,
+          ordinal = entry.name .. " " .. entry.version,
+        }
+      end,
+    },
+    sorter = conf.generic_sorter(opts),
+    attach_mappings = function(fbuf, attmap)
+      actions.select_default:replace(function()
+        actions.close(fbuf)
+        local selection = action_state.get_selected_entry()
+        if not selection then
+          tele_utils.__warn_no_selection "builtin.builtin"
+          return
+        end
+
+        M.options.package = selection.value.name .. "/" .. selection.value.version .. "/en"
+        endpoints = {}
+        print("Package prefix set to " .. M.options.package)
+      end)
+      return true
+    end
+  }):find()
+end
+
+M.endpoint_with_urn = function(opts)
   local node = ts_utils.get_node_at_cursor()
   if node == nil then
     error("No Treesitter parser found.")
+    return
   end
   local bufnr = vim.api.nvim_get_current_buf()
   local txt = vim.treesitter.query.get_node_text(node, bufnr)
   txt = txt:gsub('"','')
 
   if string.find(txt, "^sr:(%a+):%d+$") == nil then
-    print("Not a valid SR URN: " .. txt)
-  else
-    print("Valid SR URN: " .. txt)
+    error("Not a valid SR URN: " .. txt)
+    return
+  end
+
+  if endpoints.requirements == nil or endpoints.examples == nil then
+    M.update_endpoints({})
   end
 
   local urn_types = {}
   for k, r in pairs(endpoints.requirements) do
     r = r:gsub('\\d', '%%d')
-    local ptns = split_regex(r)
+    local ptns = utils.split_regex(r)
     for _, p in pairs(ptns) do
       if string.find(txt, p) ~= nil and string.find(k, "^_") == nil then
         table.insert(urn_types, "{" .. k .. "}")
       end
     end
   end
-  print(vim.inspect(urn_types))
 
   local urn_endpoints = {}
   for _, v in pairs(endpoints.examples) do
     local found = false
     for _, ptn in pairs(urn_types) do
-      print("looking for " .. ptn .. " in " .. v)
       if string.find(v, ptn) ~= nil then
         v = v:gsub(ptn, txt)
         found = true
@@ -167,24 +138,24 @@ sapi.endpoint_with_urn = function(opts)
         actions.close(fbuf)
         local selection = action_state.get_selected_entry()
         if not selection then
-          utils.__warn_no_selection "builtin.builtin"
+          tele_utils.__warn_no_selection "builtin.builtin"
           return
         end
 
-        fetch_and_display(sapi_config.base_url .. selection[1], {})
+        fetch.fetch_and_display(M.options.base_url .. selection[1], {})
       end)
       return true
     end
   }):find()
 end
 
-sapi.recents = function(opts)
+M.recents = function(opts)
   opts = opts or {}
-  local entries = db.entries:get()
+  local entries = db.get_entries()
   table.sort(entries, function (k1, k2)
     return k1.last_used > k2.last_used
   end)
-  local urls = map(entries, function(entry)
+  local urls = utils.map(entries, function(entry)
     -- return { url = row.url, last_used = row.last_used }
     return entry.url
   end)
@@ -198,28 +169,35 @@ sapi.recents = function(opts)
         actions.close(fbuf)
         local selection = action_state.get_selected_entry()
         if not selection then
-          utils.__warn_no_selection "builtin.builtin"
+          tele_utils.__warn_no_selection "builtin.builtin"
           return
         end
 
-        fetch_and_display(selection[1], {})
+        fetch.fetch_and_display(selection[1], {})
       end)
       return true
     end
   }):find()
 end
 
-sapi.update_endpoints = function(opts)
+M.update_endpoints = function(opts)
   opts = opts or {}
 
-  local routes_url = sapi_config.base_url .. "/" .. sapi_config.package .. "/routes.json"
-  local endpoints_json = utils.get_os_command_output(
-    { "curl", "-s", routes_url },
-    opts.cwd
-  )
+  local routes_url = M.options.base_url .. "/" .. M.options.package .. "/routes.json"
 
-  endpoints = vim.fn.json_decode(endpoints_json)
+  local curl_result = curl.fetch(routes_url, {})
+  -- if curl_result.status ~= '200' then
+  --   error("Error: status " .. curl_result.status .. " when fetching " .. routes_url)
+  --   return
+  -- end
+
+  endpoints = vim.fn.json_decode(curl_result.body)
   endpoints.examples = {}
+
+  if endpoints == nil or endpoints.routes == nil then
+    error("Unable to parse routes.json (" .. routes_url .. ")")
+    return
+  end
 
   for k, v in pairs(endpoints.routes) do
     for id_placeholder in string.gmatch(v, '{_(%a+)}') do
@@ -236,10 +214,12 @@ sapi.update_endpoints = function(opts)
   end
 end
 
-sapi.endpoints = function(opts)
+M.endpoints = function(opts)
   opts = opts or {}
 
-  sapi.update_endpoints(opts)
+  if endpoints.examples == nil then
+    M.update_endpoints(opts)
+  end
 
   pickers.new(opts, {
     prompt_title = "endpoints",
@@ -250,12 +230,14 @@ sapi.endpoints = function(opts)
     attach_mappings = function(fbuf, attmap)
       actions.select_default:replace(function()
         actions.close(fbuf)
+
         local selection = action_state.get_selected_entry()
         if not selection then
-          utils.__warn_no_selection "builtin.builtin"
+          tele_utils.__warn_no_selection "builtin.builtin"
           return
         end
-        local fetchUrl = sapi_config.base_url .. selection[1]
+
+        local fetchUrl = M.options.base_url .. selection[1]
         for idPlaceHolder in string.gmatch(fetchUrl, '{(%a+)}') do
           vim.ui.input({
             prompt = idPlaceHolder .. ": ",
@@ -264,7 +246,7 @@ sapi.endpoints = function(opts)
           end)
         end
 
-        fetch_and_display(fetchUrl)
+        fetch.fetch_and_display(fetchUrl)
       end)
 
       return true
@@ -272,6 +254,6 @@ sapi.endpoints = function(opts)
   }):find()
 end
 
-return sapi
+return M
 
 
