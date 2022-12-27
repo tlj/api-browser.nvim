@@ -184,12 +184,7 @@ M.update_endpoints = function(opts)
   opts = opts or {}
 
   local routes_url = M.options.base_url .. "/" .. M.options.package .. "/routes.json"
-
   local curl_result = curl.fetch(routes_url, {})
-  -- if curl_result.status ~= '200' then
-  --   error("Error: status " .. curl_result.status .. " when fetching " .. routes_url)
-  --   return
-  -- end
 
   endpoints = vim.fn.json_decode(curl_result.body)
   endpoints.examples = {}
