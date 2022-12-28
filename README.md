@@ -1,6 +1,6 @@
 # SAPI Preview for Neovim
 
-A [Neovim](https://neovim.io/) plugin to browse SAPI feeds directly in the browser.
+A [Neovim](https://neovim.io/) plugin to browse SAPI feeds directly in the editor.
 
 ## Features
 
