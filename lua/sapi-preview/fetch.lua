@@ -7,12 +7,18 @@ local M = {}
 function M.fetch_and_display(fetchUrl, opts)
   opts = opts or {}
 
-  db.insert_or_update(fetchUrl)
+  if opts.format == nil then
+    opts.format = true
+  end
 
-  local res = curl.fetch(fetchUrl)
+  if opts.save_history then
+    db.push_history(fetchUrl)
+  end
+
+  local res = curl.fetch(fetchUrl, opts)
 
   if res.status ~= 200 then
-    error("Status was not 200 - " .. res.status)
+    error("Status was not 200 - " .. res.status .. " for " .. fetchUrl)
     return
   end
 

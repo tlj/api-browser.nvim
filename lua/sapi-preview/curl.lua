@@ -1,5 +1,6 @@
 local files = require('sapi-preview.files')
 local Job = require('plenary.job')
+local utils = require('sapi-preview.utils')
 
 local M = {}
 
@@ -17,6 +18,34 @@ local function get_os_command_output(cmd, cwd)
   return stdout, ret, stderr
 end
 
+local function format_output(url, body_file, opts)
+  opts = opts or {}
+
+  local original_body = files.lines_from(body_file)
+
+  local commands = {
+    json = { "jq", ".", body_file },
+    xml = { "xmllint", "-format", body_file },
+  }
+
+  for ext, cmd in pairs(commands) do
+    if utils.ends_with(url, ext) then
+      local body, ret, err = get_os_command_output(
+        cmd,
+        opts.cwd
+      )
+      if ret ~= 0 then
+        print("Error " .. ret .. " while calling " .. cmd[1] .. " to format output: " .. err[1])
+        return original_body
+      end
+      return body
+    end
+  end
+
+  print("No matching formatter found for " .. url)
+  return original_body
+end
+
 function M.fetch(url, opts)
   opts = opts or {}
 
@@ -27,9 +56,10 @@ function M.fetch(url, opts)
   }
 
   local headers_file = '/tmp/sapi_preview.headers'
+  local body_file = '/tmp/sapi_preview.body'
 
-  local body, ret, _ = get_os_command_output(
-    { "curl", "-D", headers_file, "-s", url },
+  local _, ret, _ = get_os_command_output(
+    { "curl", "-D", headers_file, "-o", body_file, "-s", url },
     opts.cwd
   )
   if ret ~= 0 then
@@ -37,12 +67,17 @@ function M.fetch(url, opts)
     return result
   end
 
-  result.body = body
+  if opts.format then
+    result.body = format_output(url, body_file, opts)
+  else
+    result.body = files.lines_from(body_file)
+  end
+
   local header_lines = files.lines_from(headers_file)
   for _, v in pairs(header_lines) do
     v = v:gsub("\r\n", "\n")
 
-    local status = string.match(v, '^HTTP/%d.%d (%d+) ')
+    local status = string.match(v, '^HTTP/.- (%d+) ')
     if status ~= nil then
       result.status = tonumber(status)
     end
