@@ -1,13 +1,16 @@
 local sqlite = require "sqlite"
-local sqlite_uri = "/tmp/sapi_nvim_history.sqlite3"
+local dbdir = vim.fn.stdpath "data" .. "/databases"
 
 local M = {}
 local db = {}
 
 function M.init()
   if next(db) == nil then
+    if not vim.loop.fs_stat(dbdir) then
+      vim.loop.fs_mkdir(dbdir, 493)
+    end
     db = sqlite {
-      uri = sqlite_uri,
+      uri = dbdir .. "/sapi-preview.db",
       entries = {
        id = true,
        url = "text",
@@ -146,7 +149,7 @@ function M.push_history(fetchUrl)
   if existing == nil then
     db.entries:insert { url = fetchUrl }
   else
-    local ts = os.time(os.date("!*t"))
+    local ts = os.time(os.date("*t"))
     db.entries:update {
       where = { id = existing.id },
       set = { last_used = ts }

@@ -100,7 +100,7 @@ M.select_package = function(opts)
   end
 
   pickers.new(opts, {
-    prompt_title = "Select a package",
+    prompt_title = "Select a package (" .. M.options.base_url .. ")",
     finder = finders.new_table {
       results = packages,
       entry_maker = function(entry)
@@ -125,8 +125,6 @@ M.select_package = function(opts)
 
         M.options.package = selection.value.name .. "/" .. selection.value.version .. "/en"
         db.set_default("package", M.options.package)
-
-        print("Package prefix set to " .. M.options.package)
       end)
       return true
     end
@@ -203,7 +201,7 @@ M.endpoint_with_urn = function(opts)
     end
   end
   pickers.new(opts, {
-    prompt_title = "endpoints for urn " .. txt,
+    prompt_title = "Endpoints for urn " .. txt .. " (" .. M.options.base_url .. ")",
     finder = finders.new_table {
       results = urn_endpoints,
     },
@@ -217,7 +215,8 @@ M.endpoint_with_urn = function(opts)
           return
         end
 
-        fetch.fetch_and_display(M.options.base_url .. selection[1], {save_history = true})
+        db.push_history(selection[1])
+        fetch.fetch_and_display(M.options.base_url .. selection[1], {})
       end)
       return true
     end
@@ -235,7 +234,7 @@ M.recents = function(opts)
     return entry.url
   end)
   pickers.new(opts, {
-    prompt_title = "endpoint history",
+    prompt_title = "",
     finder = finders.new_table {
       results = urls,
     },
@@ -249,7 +248,8 @@ M.recents = function(opts)
           return
         end
 
-        fetch.fetch_and_display(selection[1], {save_history = true})
+        db.push_history(selection[1])
+        fetch.fetch_and_display(M.options.base_url .. selection[1], {})
       end)
       return true
     end
@@ -258,6 +258,11 @@ end
 
 M.update_endpoints = function(opts)
   opts = opts or {}
+
+  if M.options.package == nil or M.options.package == "" then
+    error("No package selected, please select a package first.")
+    return
+  end
 
   endpoints = { examples = {}, requirements = {} }
   local cached_endpoints = db.get_package_endpoints(M.options.package)
@@ -317,11 +322,12 @@ M.endpoints = function(opts)
   opts = opts or {}
 
   if endpoints.examples == nil then
+    print("No examples, updating endpoints")
     M.update_endpoints(opts)
   end
 
   pickers.new(opts, {
-    prompt_title = "endpoints",
+    prompt_title = "Endpoints (" .. M.options.base_url .. ")",
     finder = finders.new_table {
       results = endpoints.examples,
     },
@@ -345,7 +351,8 @@ M.endpoints = function(opts)
           end)
         end
 
-        fetch.fetch_and_display(fetchUrl, { save_history = true })
+        db.push_history(selection[1])
+        fetch.fetch_and_display(fetchUrl, {})
       end)
 
       return true

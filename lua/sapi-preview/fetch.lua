@@ -11,10 +11,6 @@ function M.fetch_and_display(fetchUrl, opts)
     opts.format = true
   end
 
-  if opts.save_history then
-    db.push_history(fetchUrl)
-  end
-
   local res = curl.fetch(fetchUrl, opts)
 
   if res.status ~= 200 then
@@ -32,7 +28,7 @@ function M.fetch_and_display(fetchUrl, opts)
   vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')
 
   if utils.ends_with(fetchUrl, '.xml') then
-    vim.api.nvim_buf_set_option(buf, 'filetype', 'xml')
+    vim.api.nvim_buf_set_option(buf, 'filetype', 'html')
   end
 
   if utils.ends_with(fetchUrl, '.json') then
