@@ -45,34 +45,44 @@ $ export SAPI_PREVIEW_URLS="https://url1.example;https://url2.example"
 
 Select a base url from the list defined in SAPI_PREVIEW_URLS. This will be used in subsequent lookups.
 ```vim
-:lua require'sapi-preview'.select_base_url()
+:SapiBaseUrl
 ```
 
 Select a package to use when using the endpoints selector.
 ```vim
-:lua require'sapi-preview'.select_package()
+:SapiPackage
 ```
 
 Select from a list of endpoints valid for the package. If an endpoint has a placeholder, the user will be prompted to enter a value.
 ```vim
-:lua require'sapi-preview'.endpoints()
+:SapiEndpoints
+```
+
+Select from a list of recently used endpoints. The endpoint is not remembered by base url, so it can be used to quickly open the same endpoint across different base urls.
+```vim
+:SapiRecents
 ```
 
 Look up current package endpoints with a placeholder with requirements matching the text the cursor is currently on.
 ```vim
-:lua require'sapi-preview'.endpoint_with_urn()
+:SapiGoto
+```
+
+Refresh the list of endpoints from the server (clear cache).
+```vim
+:SapiRefresh
 ```
 
 ### Suggested mappings
 
 ```vim
 require('sapi-preview').setup()
-vim.keymap.set('n', '<leader>sg', '<cmd>lua require"sapi-preview".endpoint_with_urn()<cr>', {})
-vim.keymap.set('n', '<leader>sr', '<cmd>lua require"sapi-preview".recents()<cr>', {})
-vim.keymap.set('n', '<leader>se', '<cmd>lua require"sapi-preview".endpoints()<cr>', {})
-vim.keymap.set('n', '<leader>su', '<cmd>lua require"sapi-preview".refresh_endpoints()<cr>', {})
-vim.keymap.set('n', '<leader>sp', '<cmd>lua require"sapi-preview".select_package()<cr>', {})
-vim.keymap.set('n', '<leader>sb', '<cmd>lua require"sapi-preview".select_base_url()<cr>', {})
+vim.keymap.set('n', '<leader>sg', '<cmd>SapiGoto<cr>', {})
+vim.keymap.set('n', '<leader>sr', '<cmd>SapiRecents<cr>', {})
+vim.keymap.set('n', '<leader>se', '<cmd>SapiEndpoints<cr>', {})
+vim.keymap.set('n', '<leader>su', '<cmd>SapiRefresh<cr>', {})
+vim.keymap.set('n', '<leader>sp', '<cmd>SapiPackage<cr>', {})
+vim.keymap.set('n', '<leader>sb', '<cmd>SapiBaseUrl<cr>', {})
 ```
 
 ### Database location
