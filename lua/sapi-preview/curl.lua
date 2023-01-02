@@ -55,8 +55,8 @@ function M.fetch(url, opts)
     body = {},
   }
 
-  local headers_file = '/tmp/sapi_preview.headers'
-  local body_file = '/tmp/sapi_preview.body'
+  local headers_file = os.tmpname() -- '/tmp/sapi_preview.headers'
+  local body_file = os.tmpname() -- '/tmp/sapi_preview.body'
 
   local _, ret, _ = get_os_command_output(
     { "curl", "-D", headers_file, "-o", body_file, "-s", url },
@@ -87,6 +87,9 @@ function M.fetch(url, opts)
       result.headers[name] = value
     end
   end
+
+  os.remove(headers_file)
+  os.remove(body_file)
 
   return result
 end

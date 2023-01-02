@@ -21,7 +21,8 @@ function M.fetch_and_display(fetchUrl, opts)
     vim.api.nvim_set_current_buf(buf)
   end
 
-  vim.api.nvim_buf_set_name(buf, fetchUrl)
+  local buf_name = fetchUrl:gsub("/", "_")
+  vim.api.nvim_buf_set_name(buf, buf_name)
   vim.api.nvim_buf_set_option(buf, 'buftype', 'nofile')
   vim.api.nvim_buf_set_option(buf, 'swapfile', false)
   vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')
