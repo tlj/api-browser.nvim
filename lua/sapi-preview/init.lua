@@ -216,7 +216,12 @@ M.endpoint_with_urn = function(opts)
         end
 
         db.push_history(selection[1])
-        fetch.fetch_and_display(M.options.base_url .. selection[1], {})
+
+        vim.api.nvim_command('botright vnew')
+        local buf = vim.api.nvim_get_current_buf()
+        vim.schedule(function()
+          fetch.fetch_and_display(M.options.base_url .. selection[1], {buf = buf})
+        end)
       end)
       return true
     end
@@ -249,7 +254,11 @@ M.recents = function(opts)
         end
 
         db.push_history(selection[1])
-        fetch.fetch_and_display(M.options.base_url .. selection[1], {})
+        vim.api.nvim_command('botright vnew')
+        local buf = vim.api.nvim_get_current_buf()
+        vim.schedule(function()
+          fetch.fetch_and_display(M.options.base_url .. selection[1], {buf = buf})
+        end)
       end)
       return true
     end
@@ -352,7 +361,12 @@ M.endpoints = function(opts)
         end
 
         db.push_history(selection[1])
-        fetch.fetch_and_display(fetchUrl, {})
+
+        vim.api.nvim_command('botright vnew')
+        local buf = vim.api.nvim_get_current_buf()
+        vim.schedule(function()
+          fetch.fetch_and_display(fetchUrl, {buf = buf})
+        end)
       end)
 
       return true

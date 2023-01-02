@@ -11,21 +11,28 @@ function M.fetch_and_display(fetchUrl, opts)
     opts.format = true
   end
 
-  local res = curl.fetch(fetchUrl, opts)
+  local buf = opts.buf
 
+  if not buf then
+    vim.api.nvim_command('botright vnew')
+
+    buf = vim.api.nvim_get_current_buf()
+  else
+    vim.api.nvim_set_current_buf(buf)
+  end
+
+  vim.api.nvim_buf_set_name(buf, fetchUrl)
+  vim.api.nvim_buf_set_option(buf, 'buftype', 'nofile')
+  vim.api.nvim_buf_set_option(buf, 'swapfile', false)
+  vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')
+
+  print("Fetching " .. fetchUrl .. "... ")
+
+  local res = curl.fetch(fetchUrl, opts)
   if res.status ~= 200 then
     error("Status was not 200 - " .. res.status .. " for " .. fetchUrl)
     return
   end
-
-  vim.api.nvim_command('botright vnew')
-
-  local buf = vim.api.nvim_get_current_buf()
-
-  vim.api.nvim_buf_set_name(buf, 'fetched ' .. fetchUrl)
-  vim.api.nvim_buf_set_option(buf, 'buftype', 'nofile')
-  vim.api.nvim_buf_set_option(buf, 'swapfile', false)
-  vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')
 
   if utils.ends_with(fetchUrl, '.xml') then
     vim.api.nvim_buf_set_option(buf, 'filetype', 'html')
@@ -35,7 +42,7 @@ function M.fetch_and_display(fetchUrl, opts)
     vim.api.nvim_buf_set_option(buf, 'filetype', 'json')
   end
 
-  vim.api.nvim_put(res.body, "", true, false)
+  vim.api.nvim_put(res.body, "", false, false)
 end
 
 return M
