@@ -29,7 +29,7 @@ M.set_packages = function(packages)
 end
 
 M.set_package = function(package)
-  M.package = package
+  M.options.package = package
 end
 
 M.setup = function(opts)
