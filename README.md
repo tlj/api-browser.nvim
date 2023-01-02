@@ -12,16 +12,22 @@ A [Neovim](https://neovim.io/) plugin to browse SAPI feeds directly in the edito
 - Select from URLs which match the URN under the cursor 
 - Load endpoint from 2 first base urls in separate windows with scoll lock, for easy comparison
 
-## Requirements
+## Getting started
+
+### Required plugins
 
 - [sqlite.lua](https://github.com/kkharji/sqlite.lua) (required)
 - [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) (required)
 - [plenary.nvim](https://github.com/nvim-lua/plenary.nvim) (required)
+
+### Required binaries
+
+- [neovim](https://neovim.io) (required)
 - [jq](https://stedolan.github.io/jq/) (required)
 - [xmllint](https://gnomes.pages.gitlab.gnome.org/libxml2/xmllint.html) (required)
 - [curl](https://curl.se) (required)
 
-## Installation
+### Installation
 
 An environment variable is required to set the base urls, as they should be left out of repositories commited to github.
 
@@ -29,7 +35,7 @@ An environment variable is required to set the base urls, as they should be left
 $ export SAPI_PREVIEW_URLS="https://url1.example;https://url2.example"
 ```
 
-### [Packer.nvim](https://github.com/wbthomason/packer.nvim) 
+Using [packer.nvim](https://github.com/wbthomason/packer.nvim) 
 
 ```lua
 use {
@@ -42,7 +48,7 @@ use {
 }
 ```
 
-### [lazy.nvim](https://github.com/folke/lazy.nvim)
+Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
 {
@@ -63,6 +69,10 @@ use {
   },
 }
 ```
+
+### checkhealth
+
+Make sure you call `:checkhealth sapi-preview` after installing the plugin to ensure that everything is set up correctly.
 
 ## Usage
 
