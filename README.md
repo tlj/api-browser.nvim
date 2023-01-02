@@ -10,6 +10,7 @@ A [Neovim](https://neovim.io/) plugin to browse SAPI feeds directly in the edito
 - Switch between backend base URLs 
 - Package selector to quickly switch between packages 
 - Select from URLs which match the URN under the cursor 
+- Load endpoint from 2 first base urls in separate windows with scoll lock, for easy comparison
 
 ## Requirements
 
@@ -21,6 +22,12 @@ A [Neovim](https://neovim.io/) plugin to browse SAPI feeds directly in the edito
 - [curl](https://curl.se) (required)
 
 ## Installation
+
+An environment variable is required to set the base urls, as they should be left out of repositories commited to github.
+
+```bash
+$ export SAPI_PREVIEW_URLS="https://url1.example;https://url2.example"
+```
 
 ### [Packer.nvim](https://github.com/wbthomason/packer.nvim) 
 
@@ -35,13 +42,31 @@ use {
 }
 ```
 
-An environment variable is required to set the base urls, as they should be left out of repositories commited to github.
+### [lazy.nvim](https://github.com/folke/lazy.nvim)
 
-```bash
-$ export SAPI_PREVIEW_URLS="https://url1.example;https://url2.example"
+```lua
+{
+  "tlj/sapi-preview.nvim",
+  dependencies = {
+    "kkharji/sqlite.lua",
+  },
+  config = function()
+    require("sapi-preview").setup()
+  end,
+  keys = {
+    { "<leader>sg", "<cmd>SapiGoto<cr>", desc = "Open SAPI endpoints valid for URN on cursor." },
+    { "<leader>sr", "<cmd>SapiRecents<cr>", desc = "Open list of recently opened SAPI endpoints." },
+    { "<leader>se", "<cmd>SapiEndpoints<cr>", desc = "Open list of endpoints for current package." },
+    { "<leader>su", "<cmd>SapiRefresh<cr>", desc = "Refresh list of endpoints for current package from selected base URL." },
+    { "<leader>sp", "<cmd>SapiPackage<cr>", desc = "Select a SAPI package." },
+    { "<leader>sb", "<cmd>SapiBaseUrl<cr>", desc = "Select a SAPI base URL." },
+  },
+}
 ```
 
 ## Usage
+
+Use 'c' in normal mode in any telescope selector for endpoints to open the endpoint in two windows (base_url[1] and base_url[2]) for comparison.
 
 Select a base url from the list defined in SAPI_PREVIEW_URLS. This will be used in subsequent lookups.
 ```vim
