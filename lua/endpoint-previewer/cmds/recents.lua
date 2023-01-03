@@ -20,7 +20,7 @@ M.recents = function(opts)
       results = urls,
     },
     sorter = require("telescope.config").values.generic_sorter(opts),
-    attach_mappings = function(buf, map)
+    attach_mappings = function(_, map)
       require("telescope.actions").select_default:replace(actions.telescope_select)
       map('n', 'c', actions.telescope_compare_endpoint)
 

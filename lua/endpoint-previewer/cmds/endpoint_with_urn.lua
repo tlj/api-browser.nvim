@@ -53,7 +53,7 @@ M.endpoint_with_urn = function(opts)
       results = urn_endpoints,
     },
     sorter = require("telescope.config").values.generic_sorter(opts),
-    attach_mappings = function(buf, map)
+    attach_mappings = function(_, map)
       require("telescope.actions").select_default:replace(actions.telescope_select_endpoint)
       map('n', 'c', actions.telescope_compare_endpoint)
 

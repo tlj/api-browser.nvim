@@ -4,9 +4,7 @@ local curl = require("endpoint-previewer.curl")
 
 local M = {}
 
-M.update_endpoints = function(opts)
-  opts = opts or {}
-
+M.update_endpoints = function()
   if conf.options.package == nil or conf.options.package == "" then
     error("No package selected, please select a package first.")
     return

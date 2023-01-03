@@ -4,9 +4,7 @@ local conf = require("endpoint-previewer.config")
 
 local M = {}
 
-M.refresh_packages = function(opts)
-  opts = opts or {}
-
+M.refresh_packages = function()
   local routes_url = conf.options.base_url .. "/routes.json"
   local curl_result = curl.fetch(routes_url, {})
   if curl_result.status ~= 200 then
@@ -17,7 +15,10 @@ M.refresh_packages = function(opts)
   local body = vim.fn.json_decode(curl_result.body)
 
   for _, value in pairs(body.routes) do
-    if value.defaults ~= nil and value.defaults.package_version ~= nil and value.defaults.package_version ~= "" and value.defaults.package_version ~= vim.NIL then
+    if value.defaults ~= nil
+      and value.defaults.package_version ~= nil
+      and value.defaults.package_version ~= ""
+      and value.defaults.package_version ~= vim.NIL then
       db.add_package(value.defaults.package_name, value.defaults.package_version)
     end
   end

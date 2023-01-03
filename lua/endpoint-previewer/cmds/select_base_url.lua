@@ -12,7 +12,7 @@ M.select_base_url = function(opts)
       results = conf.options.base_urls,
     },
     sorter = require("telescope.config").values.generic_sorter(opts),
-    attach_mappings = function(fbuf, attmap)
+    attach_mappings = function(fbuf)
       require("telescope.actions").select_default:replace(function()
         require("telescope.actions").close(fbuf)
         local selection = require("telescope.actions.state").get_selected_entry()

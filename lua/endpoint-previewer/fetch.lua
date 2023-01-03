@@ -1,4 +1,3 @@
-local db = require("endpoint-previewer.db")
 local curl = require("endpoint-previewer.curl")
 local utils = require("endpoint-previewer.utils")
 
