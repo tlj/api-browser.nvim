@@ -1,5 +1,5 @@
-local actions = require("sapi-preview.actions")
-local conf = require("sapi-preview.config")
+local actions = require("endpoint-previewer.actions")
+local conf = require("endpoint-previewer.config")
 
 local M = {}
 
@@ -7,8 +7,8 @@ M.endpoints = function(opts)
   opts = opts or {}
 
   if conf.endpoints.examples == nil then
-    print("No examples, updating endpoints")
-    require("sapi-preview.cmds.update_endpoints").update_endpoints(opts)
+    print("No examples, updating endpoints for " .. conf.options.package)
+    require("endpoint-previewer.cmds.update_endpoints").update_endpoints(opts)
   end
 
   require("telescope.pickers").new(opts, {

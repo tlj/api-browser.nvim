@@ -1,5 +1,5 @@
-local conf = require("sapi-preview.config")
-local db = require("sapi-preview.db")
+local conf = require("endpoint-previewer.config")
+local db = require("endpoint-previewer.db")
 
 local M = {}
 
@@ -21,8 +21,8 @@ M.select_base_url = function(opts)
           return
         end
 
-        require("sapi-preview.config").options.base_url = selection[1]
-        db.set_default("base_url", require("sapi-preview.config").options.base_url)
+        require("endpoint-previewer.config").options.base_url = selection[1]
+        db.set_default("base_url", require("endpoint-previewer.config").options.base_url)
       end)
       return true
     end

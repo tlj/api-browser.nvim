@@ -1,6 +1,6 @@
-local actions = require("sapi-preview.actions")
-local conf = require("sapi-preview.config")
-local utils = require("sapi-preview.utils")
+local actions = require("endpoint-previewer.actions")
+local conf = require("endpoint-previewer.config")
+local utils = require("endpoint-previewer.utils")
 
 local M = {}
 
@@ -20,7 +20,7 @@ M.endpoint_with_urn = function(opts)
   end
 
   if conf.endpoints.requirements == nil or conf.endpoints.examples == nil then
-    require("sapi-preview.cmds.update_endpoints").update_endpoints({})
+    require("endpoint-previewer.cmds.update_endpoints").update_endpoints({})
   end
 
   local urn_types = {}
@@ -48,7 +48,7 @@ M.endpoint_with_urn = function(opts)
     end
   end
   require("telescope.pickers").new(opts, {
-    prompt_title = "Endpoints for urn " .. txt .. " (" .. require("sapi-preview.config").options.base_url .. ")",
+    prompt_title = "Endpoints for urn " .. txt .. " (" .. require("endpoint-previewer.config").options.base_url .. ")",
     finder = require("telescope.finders").new_table {
       results = urn_endpoints,
     },

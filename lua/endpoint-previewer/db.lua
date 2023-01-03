@@ -10,7 +10,7 @@ function M.init()
       vim.loop.fs_mkdir(dbdir, 493)
     end
     db = sqlite {
-      uri = dbdir .. "/sapi-preview.db",
+      uri = dbdir .. "/endpoint-previewer.db",
       entries = {
        id = true,
        url = "text",

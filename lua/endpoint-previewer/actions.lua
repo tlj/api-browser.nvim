@@ -1,6 +1,6 @@
-local db = require("sapi-preview.db")
-local fetch = require("sapi-preview.fetch")
-local conf = require("sapi-preview.config")
+local db = require("endpoint-previewer.db")
+local fetch = require("endpoint-previewer.fetch")
+local conf = require("endpoint-previewer.config")
 
 local M = {}
 

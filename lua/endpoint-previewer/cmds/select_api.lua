@@ -1,5 +1,5 @@
-local conf = require("sapi-preview.config")
-local db = require("sapi-preview.db")
+local conf = require("endpoint-previewer.config")
+local db = require("endpoint-previewer.db")
 
 local M = {}
 
@@ -9,10 +9,10 @@ local function update_packages()
     M.refresh_packages()
     packages = db.get_packages()
   end
-  require("sapi-preview.config").set_packages(packages)
+  require("endpoint-previewer.config").set_packages(packages)
 end
 
-M.select_package = function(opts)
+M.select_api = function(opts)
   opts = opts or {}
 
   if next(conf.packages) == nil then
@@ -20,7 +20,7 @@ M.select_package = function(opts)
   end
 
   require("telescope.pickers").new(opts, {
-    prompt_title = "Select a package (" .. require("sapi-preview.config").options.base_url .. ")",
+    prompt_title = "Select a package (" .. require("endpoint-previewer.config").options.base_url .. ")",
     finder = require("telescope.finders").new_table {
       results = conf.packages,
       entry_maker = function(entry)
@@ -43,6 +43,7 @@ M.select_package = function(opts)
 
         conf.set_endpoints({})
 
+        print("Setting package " .. selection.value.name .. " " .. selection.value.version)
         conf.set_package(selection.value.name .. "/" .. selection.value.version .. "/en")
         db.set_default("package", conf.options.package)
       end)

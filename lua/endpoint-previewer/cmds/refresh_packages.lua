@@ -1,6 +1,6 @@
-local curl = require("sapi-preview.curl")
-local db = require("sapi-preview.db")
-local conf = require("sapi-preview.config")
+local curl = require("endpoint-previewer.curl")
+local db = require("endpoint-previewer.db")
+local conf = require("endpoint-previewer.config")
 
 local M = {}
 

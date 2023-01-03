@@ -1,15 +1,15 @@
-# SAPI Preview for Neovim
+# Endpoint Previewer for Neovim
 
-A [Neovim](https://neovim.io/) plugin to browse SAPI feeds directly in the editor.
+A [Neovim](https://neovim.io/) plugin to browse API endpoints directly in the editor.
 
 ## Features
 
-- Uses remote routes.json file to get all data
-- Cache packages and endpoints in sqlite database for faster lookups
+- Uses remote endpoints.json file to get a list of all APIs and endpoints
+- Cache APIs and endpoints in sqlite database for faster lookups
 - Quickly access recent URLs 
 - Switch between backend base URLs 
-- Package selector to quickly switch between packages 
-- Select from URLs which match the URN under the cursor 
+- API selector to quickly switch between APIs 
+- Select from endpoints which match the replacement requirements under the cursor 
 - Load endpoint from 2 first base urls in separate windows with scoll lock, for easy comparison
 
 ## Getting started
@@ -32,14 +32,14 @@ A [Neovim](https://neovim.io/) plugin to browse SAPI feeds directly in the edito
 An environment variable is required to set the base urls, as they should be left out of repositories commited to github.
 
 ```bash
-$ export SAPI_PREVIEW_URLS="https://url1.example;https://url2.example"
+$ export ENDPOINT_PREVIEWER_URLS="https://url1.example;https://url2.example"
 ```
 
 Using [packer.nvim](https://github.com/wbthomason/packer.nvim) 
 
 ```lua
 use {
-  "tlj/sapi-preview.nvim",
+  "tlj/endpoint-previewer.nvim",
   {
     "kkharji/sqlite.lua",
     "nvim-lua/plenary.nvim",
@@ -52,72 +52,72 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
 {
-  "tlj/sapi-preview.nvim",
+  "tlj/endpoint-previewer.nvim",
   dependencies = {
     "kkharji/sqlite.lua",
   },
   config = function()
-    require("sapi-preview").setup()
+    require("endpoint-previewer").setup()
   end,
   keys = {
-    { "<leader>sg", "<cmd>SapiGoto<cr>", desc = "Open SAPI endpoints valid for URN on cursor." },
-    { "<leader>sr", "<cmd>SapiRecents<cr>", desc = "Open list of recently opened SAPI endpoints." },
-    { "<leader>se", "<cmd>SapiEndpoints<cr>", desc = "Open list of endpoints for current package." },
-    { "<leader>su", "<cmd>SapiRefresh<cr>", desc = "Refresh list of endpoints for current package from selected base URL." },
-    { "<leader>sp", "<cmd>SapiPackage<cr>", desc = "Select a SAPI package." },
-    { "<leader>sb", "<cmd>SapiBaseUrl<cr>", desc = "Select a SAPI base URL." },
+    { "<leader>sg", "<cmd>EndpointGoto<cr>", desc = "Open API endpoints valid for replacement text on cursor." },
+    { "<leader>sr", "<cmd>EndpointRecents<cr>", desc = "Open list of recently opened API endpoints." },
+    { "<leader>se", "<cmd>EndpointEndpoints<cr>", desc = "Open list of endpoints for current API." },
+    { "<leader>su", "<cmd>EndpointRefresh<cr>", desc = "Refresh list of APIs and Endpoints." },
+    { "<leader>sp", "<cmd>EndpointAPI<cr>", desc = "Select an API." },
+    { "<leader>sb", "<cmd>EndpointBaseUrl<cr>", desc = "Select a base URL to fetch endpoints from." },
   },
 }
 ```
 
 ### checkhealth
 
-Make sure you call `:checkhealth sapi-preview` after installing the plugin to ensure that everything is set up correctly.
+Make sure you call `:checkhealth endpoint-previewer` after installing the plugin to ensure that everything is set up correctly.
 
 ## Usage
 
 Use 'c' in normal mode in any telescope selector for endpoints to open the endpoint in two windows (base_url[1] and base_url[2]) for comparison.
 
-Select a base url from the list defined in SAPI_PREVIEW_URLS. This will be used in subsequent lookups.
+Select a base url from the list defined in ENDPOINT_PREVIEWER_URLS. This will be used in subsequent lookups.
 ```vim
-:SapiBaseUrl
+:EndpointBaseUrl
 ```
 
-Select a package to use when using the endpoints selector.
+Select an API to use when using the endpoints selector.
 ```vim
-:SapiPackage
+:EndpointAPI
 ```
 
-Select from a list of endpoints valid for the package. If an endpoint has a placeholder, the user will be prompted to enter a value.
+Select from a list of endpoints valid for the API. If an endpoint has a placeholder, the user will be prompted to enter a value.
 ```vim
-:SapiEndpoints
+:EndpointEndpoints
 ```
 
 Select from a list of recently used endpoints. The endpoint is not remembered by base url, so it can be used to quickly open the same endpoint across different base urls.
 ```vim
-:SapiRecents
+:EndpointRecents
 ```
 
-Look up current package endpoints with a placeholder with requirements matching the text the cursor is currently on.
+Look up current API endpoints with a placeholder with requirements matching the text the cursor is currently on.
 ```vim
-:SapiGoto
+:EndpointGoto
 ```
 
 Refresh the list of endpoints from the server (clear cache).
 ```vim
-:SapiRefresh
+:EndpointRefresh
 ```
 
 ### Suggested mappings
 
 ```vim
-require('sapi-preview').setup()
-vim.keymap.set('n', '<leader>sg', '<cmd>SapiGoto<cr>', {})
-vim.keymap.set('n', '<leader>sr', '<cmd>SapiRecents<cr>', {})
-vim.keymap.set('n', '<leader>se', '<cmd>SapiEndpoints<cr>', {})
-vim.keymap.set('n', '<leader>su', '<cmd>SapiRefresh<cr>', {})
-vim.keymap.set('n', '<leader>sp', '<cmd>SapiPackage<cr>', {})
-vim.keymap.set('n', '<leader>sb', '<cmd>SapiBaseUrl<cr>', {})
+require('endpoint-previewer').setup()
+vim.keymap.set('n', '<leader>sg', '<cmd>EndpointGoto<cr>', {})
+vim.keymap.set('n', '<leader>sr', '<cmd>EndpointRecents<cr>', {})
+vim.keymap.set('n', '<leader>se', '<cmd>EndpointEndpoints<cr>', {})
+vim.keymap.set('n', '<leader>su', '<cmd>EndpointRefresh<cr>', {})
+vim.keymap.set('n', '<leader>sp', '<cmd>EndpointAPI<cr>', {})
+vim.keymap.set('n', '<leader>sb', '<cmd>EndpointBaseUrl<cr>', {})
 ```
 
 ### Database location

@@ -1,4 +1,4 @@
-local db = require("sapi-preview.db")
+local db = require("endpoint-previewer.db")
 
 local M = {
   options = {},
@@ -12,7 +12,7 @@ local default = {
   base_url = '',
   keep_state = true,
   -- base_urls should not be set and pushed to github, use
-  -- environment variable SAPI_PREVIEW_URLS instead
+  -- environment variable ENDPOINT_PREVIEWER_URLS instead
   base_urls = {}
 }
 
@@ -36,7 +36,7 @@ M.setup = function(opts)
   opts = opts or {}
 
   if opts.base_urls ~= nil and next(opts.base_urls) ~= nil then
-    print("Warning: base_urls should be set with env variable SAPI_PREVIEW_URLS, semicolon separated.")
+    print("Warning: base_urls should be set with env variable ENDPOINT_PREVIEWER_URLS, semicolon separated.")
   end
 
   local options = {}
@@ -44,13 +44,13 @@ M.setup = function(opts)
     options[k] = v
   end
 
-  local base_urls = os.getenv("SAPI_PREVIEW_URLS")
+  local base_urls = os.getenv("ENDPOINT_PREVIEWER_URLS")
   if base_urls ~= nil then
     for str in string.gmatch(base_urls, "([^;]+)") do
       table.insert(options.base_urls, str)
     end
   else
-    print("SAPI_PREVIEW_URLS is empty.")
+    print("ENDPOINT_PREVIEWER_URLS is empty.")
   end
 
   for k, v in pairs(opts) do
