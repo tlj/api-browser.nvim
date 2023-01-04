@@ -8,6 +8,6 @@ prepare: clean
 	@luarocks install luacheck --local
 
 test:
-	@nvim --headless -c "PlenaryBustedDirectory test/spec/endpoint-previewer {minimal_init = './test/minimal_vim.vim'}"
+	nvim --headless -c "PlenaryBustedDirectory test/spec/endpoint-previewer {minimal_init = './test/minimal_vim.vim'}"
 
 
