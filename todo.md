@@ -9,4 +9,6 @@
 - [x] Open a buffer immediately with a message saying "downloading <url>...", then overwrite that with the content
 - [x] Make a method for opening an endpoint from two base urls at the same time, opening in two windows
 - [ ] Document endpoints.json format, use one endpoint for all APIs
+- [ ] Support multiselect through get_current_picker(buf):get_multi_selection(). Open all endpoints (up to a limit)
+
 

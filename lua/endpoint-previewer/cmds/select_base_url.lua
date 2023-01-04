@@ -21,7 +21,7 @@ M.select_base_url = function(opts)
           return
         end
 
-        require("endpoint-previewer.config").options.base_url = selection[1]
+        require("endpoint-previewer.config").set_base_url(selection[1])
         db.set_default("base_url", require("endpoint-previewer.config").options.base_url)
       end)
       return true

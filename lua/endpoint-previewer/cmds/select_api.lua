@@ -1,35 +1,18 @@
 local conf = require("endpoint-previewer.config")
 local db = require("endpoint-previewer.db")
+local endpoints = require("endpoint-previewer.endpoints")
 
 local M = {}
-
-local function update_packages()
-  local packages = db.get_packages()
-  if next(packages) == nil then
-    M.refresh_packages()
-    packages = db.get_packages()
-  end
-  require("endpoint-previewer.config").set_packages(packages)
-end
 
 M.select_api = function(opts)
   opts = opts or {}
 
-  if next(conf.packages) == nil then
-    update_packages()
-  end
+  local packages = endpoints.get_api_names()
 
   require("telescope.pickers").new(opts, {
-    prompt_title = "Select a package (" .. require("endpoint-previewer.config").options.base_url .. ")",
+    prompt_title = "Select a package (" .. conf.options.base_url .. ")",
     finder = require("telescope.finders").new_table {
-      results = conf.packages,
-      entry_maker = function(entry)
-        return {
-          value = entry,
-          display = entry.name .. " " .. entry.version,
-          ordinal = entry.name .. " " .. entry.version,
-        }
-      end,
+      results = packages,
     },
     sorter = require("telescope.config").values.generic_sorter(opts),
     attach_mappings = function(fbuf)
@@ -43,8 +26,8 @@ M.select_api = function(opts)
 
         conf.set_endpoints({})
 
-        print("Setting package " .. selection.value.name .. " " .. selection.value.version)
-        conf.set_package(selection.value.name .. "/" .. selection.value.version .. "/en")
+        print("Setting package " .. selection[1])
+        conf.set_package(selection[1])
         db.set_default("package", conf.options.package)
       end)
       return true

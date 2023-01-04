@@ -19,24 +19,8 @@ function M.init()
       defaults = {
         name = "text",
         value = "text",
-      },
-      packages = {
-        id = true,
-        name = "text",
-        version = "text",
-      },
-      endpoints = {
-        id = true,
-        url = "text",
-        package_url = "text",
-      },
-      requirements = {
-        id = true,
-        package_url = "text",
-        name = "text",
-        value = "text",
       }
-    }
+   }
   end
 end
 
@@ -67,73 +51,7 @@ end
 
 function M.clear_cache()
   M.init()
-  M.clear_packages()
   db.entries:remove()
-  db.endpoints:remove()
-  db.requirements:remove()
-end
-
-function M.clear_package_endpoints(package_url)
-  M.init()
-
-  db.endpoints:remove({ package_url = package_url })
-  db.requirements:remove({ package_url = package_url })
-end
-
-function M.add_package_requirement(package_url, name, value)
-  M.init()
-
-  local existing = db.requirements:where { package_url = package_url, name = name }
-  if existing == nil then
-    db.requirements:insert({package_url = package_url, name = name, value = value })
-  else
-    db.endpoints:update({
-      where = { package_url = package_url, name = name },
-      set = { value = value }
-    })
-  end
-end
-
-function M.get_package_requirements(package_url)
-  M.init()
-
-  return db.requirements:get({ where = { package_url = package_url }})
-end
-
-function M.add_package_endpoint(package_url, url)
-  M.init()
-
-  local existing = db.endpoints:where { package_url = package_url, url = url }
-  if existing == nil then
-    db.endpoints:insert({ package_url = package_url, url = url })
-  end
-end
-
-function M.get_package_endpoints(package_url)
-  M.init()
-
-  return db.endpoints:get({ where = { package_url = package_url }})
-end
-
-function M.clear_packages()
-  M.init()
-
-  return db.packages:remove()
-end
-
-function M.add_package(name, version)
-  M.init()
-
-  local existing = db.packages:where { name = name, version = version }
-  if existing == nil then
-    db.packages:insert { name = name, version = version }
-  end
-end
-
-function M.get_packages()
-  M.init()
-
-  return db.packages:get()
 end
 
 function M.get_entries()

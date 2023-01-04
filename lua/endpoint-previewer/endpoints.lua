@@ -1,6 +1,8 @@
 local curl = require("endpoint-previewer.curl")
 
 local M = {
+  loaded = false,
+  url = '',
   json = {
     apis = {},
     global = {
@@ -10,6 +12,57 @@ local M = {
     }
   }
 }
+
+M.is_loaded = function()
+  return M.loaded
+end
+
+M.set_url = function(url)
+  M.url = url
+  M.loaded = false
+end
+
+M.load = function()
+  M.loaded = false
+  if M.url ~= "" then M.parse_url(M.url) end
+end
+
+M.get_api_names = function()
+  if not M.is_loaded() then M.load() end
+
+  local result = {}
+  for k, _ in pairs(M.json.apis) do
+    table.insert(result, k)
+  end
+  return result
+end
+
+M.get_endpoint_by_api_name_and_urn = function(api_name, urn)
+  if not M.is_loaded() then M.load() end
+
+  local endpoints = M.get_by_api_name(api_name)
+  if not endpoints then
+    return {}
+  end
+  local result = {}
+  for _, e in pairs(endpoints) do
+    for p, r in pairs(e.requirements or {}) do
+      r = r:gsub('\\d', '%%d')
+      if urn:find(r) then
+        local ec = vim.deepcopy(e)
+        ec.matches_placeholder = p
+        ec.url = ec.url:gsub("{" .. p .. "}", urn)
+        local placeholder_idx = 0
+        for k, v in pairs(ec.placeholders) do
+          if v == p then placeholder_idx = k end
+        end
+        if placeholder_idx > 0 then table.remove(ec.placeholders, placeholder_idx) end
+        table.insert(result, ec)
+      end
+    end
+  end
+  return result
+end
 
 M.replace_with_defaults = function(endpoint, defaults)
   local defs = vim.deepcopy(defaults)
@@ -42,7 +95,7 @@ end
 
 M.parse_endpoints = function(endpoints, defaults, requirements)
   local result = {}
-  for _, endpoint in pairs(endpoints) do
+  for _, endpoint in pairs(endpoints or {}) do
     local defs = vim.deepcopy(defaults)
     for k, d in pairs(endpoint.defaults or {}) do
       defs[k] = d
@@ -78,6 +131,8 @@ M.parse_endpoints = function(endpoints, defaults, requirements)
 end
 
 M.get_by_api_name = function(api_name, opts)
+  if not M.is_loaded() then M.load() end
+
   opts = opts or {}
 
   if api_name ~= "" and (M.json.apis and M.json.apis[api_name] == nil) then
@@ -111,6 +166,7 @@ end
 
 M.parse = function(content)
   M.json = vim.fn.json_decode(content)
+  M.loaded = true
 end
 
 M.parse_file = function(file_name)

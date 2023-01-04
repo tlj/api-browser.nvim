@@ -12,16 +12,23 @@ M.recents = function(opts)
   end)
   local urls = utils.map(entries, function(entry)
     -- return { url = row.url, last_used = row.last_used }
-    return entry.url
+    return { url = entry.url }
   end)
   require("telescope.pickers").new(opts, {
     prompt_title = "",
     finder = require("telescope.finders").new_table {
       results = urls,
+      entry_maker = function(entry)
+        return {
+          value = entry,
+          display = entry.url,
+          ordinal = entry.url,
+        }
+      end
     },
     sorter = require("telescope.config").values.generic_sorter(opts),
     attach_mappings = function(_, map)
-      require("telescope.actions").select_default:replace(actions.telescope_select)
+      require("telescope.actions").select_default:replace(actions.telescope_select_endpoint)
       map('n', 'c', actions.telescope_compare_endpoint)
 
       return true

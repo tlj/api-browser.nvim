@@ -5,6 +5,10 @@ local conf = require("endpoint-previewer.config")
 local M = {}
 
 function M.telescope_select_endpoint(buf)
+-- multi select code
+--  local num_selections = require("telescope.actions.state").get_current_picker(buf):get_multi_selection()
+-- print(vim.inspect(num_selections))
+
   require("telescope.actions").close(buf)
   local selection = require("telescope.actions.state").get_selected_entry()
   if not selection then
@@ -12,8 +16,8 @@ function M.telescope_select_endpoint(buf)
     return
   end
 
-  local selected = selection[1]
-  for idPlaceHolder in string.gmatch(selected, '{(%a+)}') do
+  local selected = selection.value.url
+  for _, idPlaceHolder in pairs(selection.value.placeholders or {}) do
     vim.ui.input({
       prompt = idPlaceHolder .. ": ",
     }, function(idInput)
@@ -38,8 +42,8 @@ function M.telescope_compare_endpoint(buf)
     require("telescope.utils").__warn_no_selection "builtin.builtin"
   end
 
-  local selected = selection[1]
-  for idPlaceHolder in string.gmatch(selected, '{(%a+)}') do
+  local selected = selection.value.url
+  for _, idPlaceHolder in pairs(selection.value.placeholders or {}) do
     vim.ui.input({
       prompt = idPlaceHolder .. ": ",
     }, function(idInput)

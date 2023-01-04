@@ -32,6 +32,11 @@ M.set_package = function(package)
   M.options.package = package
 end
 
+M.set_base_url = function(base_url)
+  M.options.base_url = base_url
+  require("endpoint-previewer.endpoints").set_url(base_url .. "/endpoints.json")
+end
+
 M.setup = function(opts)
   opts = opts or {}
 
@@ -69,8 +74,10 @@ M.setup = function(opts)
   if options.base_url == "" then
     local bu = options.base_urls[1]
     if bu ~= nil then
-      options.base_url = bu
+      M.set_base_url(bu)
     end
+  else
+    M.set_base_url(options.base_url)
   end
 
   M.options = options

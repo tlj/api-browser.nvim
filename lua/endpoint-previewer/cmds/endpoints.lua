@@ -1,20 +1,28 @@
 local actions = require("endpoint-previewer.actions")
 local conf = require("endpoint-previewer.config")
+local endpoints = require("endpoint-previewer.endpoints")
 
 local M = {}
 
 M.endpoints = function(opts)
   opts = opts or {}
 
-  if conf.endpoints.examples == nil then
-    print("No examples, updating endpoints for " .. conf.options.package)
-    require("endpoint-previewer.cmds.update_endpoints").update_endpoints()
+  local parsed_urls = endpoints.get_by_api_name(conf.options.package)
+  if not parsed_urls then
+    parsed_urls = {}
   end
 
   require("telescope.pickers").new(opts, {
     prompt_title = "Endpoints (" .. conf.options.base_url .. ")",
     finder = require("telescope.finders").new_table {
-      results = conf.endpoints.examples,
+      results = parsed_urls,
+      entry_maker = function(entry)
+        return {
+          value = entry,
+          display = entry.url,
+          ordinal = entry.url,
+        }
+      end,
     },
     sorter = require("telescope.config").values.generic_sorter(opts),
     attach_mappings = function(_, map)

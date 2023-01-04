@@ -1,3 +1,5 @@
+[![Integration](https://github.com/tlj/sapi-preview.nvim/actions/workflows/integration.yml/badge.svg)](https://github.com/tlj/sapi-preview.nvim/actions/workflows/integration.yml)
+
 # Endpoint Previewer for Neovim
 
 A [Neovim](https://neovim.io/) plugin to browse API endpoints directly in the editor.

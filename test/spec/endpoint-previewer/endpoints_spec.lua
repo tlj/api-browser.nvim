@@ -1,6 +1,17 @@
 describe("endpoint-previewer.endpoints", function()
   local module = require("endpoint-previewer.endpoints")
 
+  describe("is loaded", function()
+    it("is not loaded", function()
+      assert.is_false(module.is_loaded())
+    end)
+
+    it("is loaded", function()
+      module.parse_file("test/fixtures/endpoints.json")
+      assert.is_true(module.is_loaded())
+    end)
+  end)
+
   describe("invalid api", function()
     it("has errors", function()
       local result = module.get_by_api_name("invalid api")
@@ -61,6 +72,15 @@ describe("endpoint-previewer.endpoints", function()
       assert.equals("/pets/v1/cats.xml", result[3].url)
       assert.equals("/pets/v1/cat/{catId}.json", result[4].url)
       assert.is_same({catId = "^cat:\\d+$"}, result[4].requirements)
+    end)
+
+    it("has one endpoint matching cat:1 urn", function()
+      local result = module.get_endpoint_by_api_name_and_urn("pet api v1", "cat:1")
+      assert.is_not_nil(result)
+      assert.equals(1, #result)
+      assert.equals("/pets/v1/cat/cat:1.json", result[1].url)
+      assert.equals("catId", result[1].matches_placeholder)
+      assert.is_same({}, result[1].placeholders)
     end)
 
   end)
