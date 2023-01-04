@@ -41,5 +41,7 @@ jobs:
       run: luacheck lua/ 
 
     - name: Run tests
-      run: make test
+      run: |
+        make vendor
+        make test
 
