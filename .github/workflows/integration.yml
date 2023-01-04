@@ -38,10 +38,14 @@ jobs:
         make prepare
 
     - name: Run linter
-      run: luacheck lua/ 
+      run: |
+        luacheck lua/ 
+
+    - name: Install vendor plugins
+      run: |
+        make vendor
 
     - name: Run tests
       run: |
-        make vendor
         make test
 
