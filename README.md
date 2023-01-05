@@ -74,7 +74,7 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 		{ "<leader>se", "<cmd>EndpointEndpoints<cr>", desc = "Open list of endpoints for current API." }, 
 		{ "<leader>su", "<cmd>EndpointRefresh<cr>", desc = "Refresh list of APIs and
 Endpoints." }, 
-		{ "<leader>sp", "<cmd>EndpointAPI<cr>", desc = "Select an API." }, 
+		{ "<leader>sa", "<cmd>EndpointAPI<cr>", desc = "Select an API." }, 
 		{ "<leader>sb", "<cmd>EndpointBaseUrl<cr>", desc = "Select a base URL to
 fetch endpoints from." }, 
 	}, 
@@ -127,7 +127,7 @@ differences between the endpoints. The differences can be navigated by using
 ```vim 
 require('endpoint-previewer').setup() 
 vim.keymap.set('n', '<leader>sg', '<cmd>EndpointGoto<cr>', {}) 
-vim.keymap.set('n', '<leader>sr', '<cmd>EndpointRecents<cr>', {}) vim.keymap.set('n', '<leader>se', '<cmd>EndpointEndpoints<cr>', {}) vim.keymap.set('n', '<leader>su', '<cmd>EndpointRefresh<cr>', {}) vim.keymap.set('n', '<leader>sp', '<cmd>EndpointAPI<cr>', {}) 
+vim.keymap.set('n', '<leader>sr', '<cmd>EndpointRecents<cr>', {}) vim.keymap.set('n', '<leader>se', '<cmd>EndpointEndpoints<cr>', {}) vim.keymap.set('n', '<leader>su', '<cmd>EndpointRefresh<cr>', {}) vim.keymap.set('n', '<leader>sa', '<cmd>EndpointAPI<cr>', {}) 
 vim.keymap.set('n', '<leader>sb', '<cmd>EndpointBaseUrl<cr>', {}) 
 ```
 
