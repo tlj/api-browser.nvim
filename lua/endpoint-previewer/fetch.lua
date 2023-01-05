@@ -1,6 +1,5 @@
-local db = require("sapi-preview.db")
-local curl = require("sapi-preview.curl")
-local utils = require("sapi-preview.utils")
+local curl = require("endpoint-previewer.curl")
+local utils = require("endpoint-previewer.utils")
 
 local M = {}
 
@@ -31,8 +30,7 @@ function M.fetch_and_display(fetchUrl, opts)
 
   local res = curl.fetch(fetchUrl, opts)
   if res.status ~= 200 then
-    error("Status was not 200 - " .. res.status .. " for " .. fetchUrl)
-    return
+    print("Status was not 200 - " .. res.status .. " for " .. fetchUrl)
   end
 
   if utils.ends_with(fetchUrl, '.xml') then

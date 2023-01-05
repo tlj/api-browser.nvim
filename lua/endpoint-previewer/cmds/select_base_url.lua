@@ -1,5 +1,5 @@
-local conf = require("sapi-preview.config")
-local db = require("sapi-preview.db")
+local conf = require("endpoint-previewer.config")
+local db = require("endpoint-previewer.db")
 
 local M = {}
 
@@ -12,7 +12,7 @@ M.select_base_url = function(opts)
       results = conf.options.base_urls,
     },
     sorter = require("telescope.config").values.generic_sorter(opts),
-    attach_mappings = function(fbuf, attmap)
+    attach_mappings = function(fbuf)
       require("telescope.actions").select_default:replace(function()
         require("telescope.actions").close(fbuf)
         local selection = require("telescope.actions.state").get_selected_entry()
@@ -21,8 +21,8 @@ M.select_base_url = function(opts)
           return
         end
 
-        require("sapi-preview.config").options.base_url = selection[1]
-        db.set_default("base_url", require("sapi-preview.config").options.base_url)
+        require("endpoint-previewer.config").set_base_url(selection[1])
+        db.set_default("base_url", require("endpoint-previewer.config").options.base_url)
       end)
       return true
     end

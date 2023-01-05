@@ -1,6 +1,6 @@
-local files = require('sapi-preview.files')
+local files = require('endpoint-previewer.files')
 local Job = require('plenary.job')
-local utils = require('sapi-preview.utils')
+local utils = require('endpoint-previewer.utils')
 
 local M = {}
 
@@ -55,8 +55,8 @@ function M.fetch(url, opts)
     body = {},
   }
 
-  local headers_file = os.tmpname() -- '/tmp/sapi_preview.headers'
-  local body_file = os.tmpname() -- '/tmp/sapi_preview.body'
+  local headers_file = os.tmpname()
+  local body_file = os.tmpname()
 
   local _, ret, _ = get_os_command_output(
     { "curl", "-D", headers_file, "-o", body_file, "-s", url },

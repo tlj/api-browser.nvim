@@ -1,0 +1,6 @@
+*endpoint-previewer.txt* Endpoint Previewer
+
+endpoint-previewer.nvim is a plugin for previewing API endpoints directly in
+nvim.
+
+
