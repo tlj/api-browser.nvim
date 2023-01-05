@@ -25,13 +25,7 @@ function M.fetch_and_display(fetchUrl, opts)
   vim.api.nvim_buf_set_option(buf, 'buftype', 'nofile')
   vim.api.nvim_buf_set_option(buf, 'swapfile', false)
   vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')
-
-  print("Fetching " .. fetchUrl .. "... ")
-
-  local res = curl.fetch(fetchUrl, opts)
-  if res.status ~= 200 then
-    print("Status was not 200 - " .. res.status .. " for " .. fetchUrl)
-  end
+  vim.api.nvim_put({"Fetching " .. fetchUrl .. "..."}, "", false, false)
 
   if utils.ends_with(fetchUrl, '.xml') then
     vim.api.nvim_buf_set_option(buf, 'filetype', 'html')
@@ -41,7 +35,21 @@ function M.fetch_and_display(fetchUrl, opts)
     vim.api.nvim_buf_set_option(buf, 'filetype', 'json')
   end
 
-  vim.api.nvim_put(res.body, "", false, false)
+  local function on_exit(result)
+    local lines = vim.api.nvim_buf_line_count(buf)
+    vim.api.nvim_buf_set_lines(buf, 0, lines, false, {})
+    vim.api.nvim_buf_call(buf, function()
+      vim.api.nvim_put(result.output, "", false, false)
+    end)
+    if result.status_code == 200 then
+      print("Fetched " .. fetchUrl)
+    else
+      print("Got status code " .. result.status_code .. " for " .. fetchUrl)
+    end
+  end
+
+  print("Fetching " .. fetchUrl .. "... ")
+  curl.fetch_async(fetchUrl, on_exit)
 end
 
 return M
