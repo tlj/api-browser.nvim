@@ -4,9 +4,7 @@ local utils = require('endpoint-previewer.utils')
 
 local M = {}
 
-M.fetch_async = function(url, callback, opts)
-  opts = opts or {}
-
+M.fetch_async = function(url, callback)
   local headers_file = os.tmpname()
   local body_file = os.tmpname()
 

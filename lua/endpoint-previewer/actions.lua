@@ -34,7 +34,15 @@ function M.telescope_select_endpoint(buf)
   end)
 end
 
-function M.telescope_compare_endpoint(buf)
+function M.telescope_diff_endpoint(buf, opts)
+  opts = opts or {}
+  opts.diff = true
+  M.telescope_compare_endpoint(buf, opts)
+end
+
+function M.telescope_compare_endpoint(buf, opts)
+  opts = opts or {}
+
   require("telescope.actions").close(buf)
 
   local selection = require("telescope.actions.state").get_selected_entry()
@@ -64,10 +72,10 @@ function M.telescope_compare_endpoint(buf)
   vim.api.nvim_win_set_option(win2, "scrollbind", true)
 
   vim.schedule(function()
-    fetch.fetch_and_display(conf.options.base_urls[1] .. selected, {buf = buf1})
+    fetch.fetch_and_display(conf.options.base_urls[1] .. selected, vim.tbl_extend("force", opts, {buf = buf1}))
   end)
   vim.schedule(function()
-    fetch.fetch_and_display(conf.options.base_urls[2] .. selected, {buf = buf2})
+    fetch.fetch_and_display(conf.options.base_urls[2] .. selected, vim.tbl_extend("force", opts, {buf = buf2}))
   end)
 end
 

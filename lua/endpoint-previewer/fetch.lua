@@ -26,6 +26,9 @@ function M.fetch_and_display(fetchUrl, opts)
   vim.api.nvim_buf_set_option(buf, 'swapfile', false)
   vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')
   vim.api.nvim_put({"Fetching " .. fetchUrl .. "..."}, "", false, false)
+  if opts.diff then
+    vim.cmd('diffthis')
+  end
 
   if utils.ends_with(fetchUrl, '.xml') then
     vim.api.nvim_buf_set_option(buf, 'filetype', 'html')
