@@ -13,6 +13,10 @@ local M = {
   }
 }
 
+local function compare_endpoints(a, b)
+  return a.url < b.url
+end
+
 M.is_loaded = function()
   return M.loaded
 end
@@ -34,6 +38,9 @@ M.get_api_names = function()
   for k, _ in pairs(M.json.apis) do
     table.insert(result, k)
   end
+
+  table.sort(result)
+
   return result
 end
 
@@ -61,6 +68,9 @@ M.get_endpoint_by_api_name_and_urn = function(api_name, urn)
       end
     end
   end
+
+  table.sort(result, compare_endpoints)
+
   return result
 end
 
@@ -160,6 +170,8 @@ M.get_by_api_name = function(api_name, opts)
       table.insert(result, v)
     end
   end
+
+  table.sort(result, compare_endpoints)
 
   return result
 end
