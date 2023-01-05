@@ -72,10 +72,10 @@ function M.telescope_compare_endpoint(buf, opts)
   vim.api.nvim_win_set_option(win2, "scrollbind", true)
 
   vim.schedule(function()
-    fetch.fetch_and_display(conf.options.base_urls[1] .. selected, vim.tbl_extend("force", opts, {buf = buf1}))
+    fetch.fetch_and_display(conf.options.base_urls[2] .. selected, vim.tbl_extend("force", opts, {buf = buf1}))
   end)
   vim.schedule(function()
-    fetch.fetch_and_display(conf.options.base_urls[2] .. selected, vim.tbl_extend("force", opts, {buf = buf2}))
+    fetch.fetch_and_display(conf.options.base_urls[1] .. selected, vim.tbl_extend("force", opts, {buf = buf2}))
   end)
 end
 
