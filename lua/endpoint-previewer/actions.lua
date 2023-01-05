@@ -65,10 +65,19 @@ function M.telescope_compare_endpoint(buf, opts)
   local buf1 = vim.api.nvim_get_current_buf()
   local win1 = vim.api.nvim_get_current_win()
   vim.api.nvim_win_set_option(win1, "scrollbind", true)
+  local win1opts = {}
+  win1opts['scope'] = 'local'
+  win1opts['win'] = win1
+  vim.api.nvim_set_option_value("wrap", false, win1opts)
+  vim.api.nvim_win_set_option(win1, "wrap", false)
 
   vim.api.nvim_command('rightbelow new')
   local buf2 = vim.api.nvim_get_current_buf()
   local win2 = vim.api.nvim_get_current_win()
+  local win2opts = {}
+  win2opts['scope'] = 'local'
+  win2opts['win'] = win2
+  vim.api.nvim_set_option_value("wrap", false, win2opts)
   vim.api.nvim_win_set_option(win2, "scrollbind", true)
 
   vim.schedule(function()
