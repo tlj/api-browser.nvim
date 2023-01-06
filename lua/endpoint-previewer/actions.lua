@@ -4,7 +4,12 @@ local conf = require("endpoint-previewer.config")
 
 local M = {}
 
-function M.telescope_select_endpoint(buf)
+function M.telescope_debug_endpoint(buf)
+  M.telescope_select_endpoint(buf, {debug = true})
+end
+
+function M.telescope_select_endpoint(buf, opts)
+  opts = opts or {}
 -- multi select code
 --  local num_selections = require("telescope.actions.state").get_current_picker(buf):get_multi_selection()
 -- print(vim.inspect(num_selections))
@@ -27,11 +32,21 @@ function M.telescope_select_endpoint(buf)
 
   db.push_history(selected)
 
+  if opts.debug then
+    require("endpoint-previewer.dap").start()
+  end
+
   vim.api.nvim_command('botright vnew')
   local nbuf = vim.api.nvim_get_current_buf()
-  vim.schedule(function()
-    fetch.fetch_and_display(conf.options.base_url .. selected, {buf = nbuf})
-  end)
+  if opts.debug then
+    vim.defer_fn(function()
+      fetch.fetch_and_display(conf.options.base_url .. selected, vim.tbl_extend("force", opts, {buf = nbuf}))
+    end, 500)
+  else
+    vim.schedule(function()
+      fetch.fetch_and_display(conf.options.base_url .. selected, vim.tbl_extend("force", opts, {buf = nbuf}))
+    end)
+  end
 end
 
 function M.telescope_diff_endpoint(buf, opts)

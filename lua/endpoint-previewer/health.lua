@@ -20,6 +20,17 @@ local required_plugins = {
   },
 }
 
+local optional_plugins = {
+  {
+    name = "dap",
+    url = "[nvim-dap](https://github.com/mfussenegger/nvim-dap)",
+  },
+  {
+    name = "dapui",
+    url = "[nvim-dap-ui](https://github.com/rcarriga/nvim-dap-ui)",
+  }
+}
+
 local required_executables = {
   {
     name = "curl",
@@ -39,6 +50,15 @@ M.check = function()
   vim.fn["health#report_start"] "Checking for required plugins"
 
   for _, p in pairs(required_plugins) do
+    if lualib_installed(p.name) then
+      vim.fn["health#report_ok"](p.url .. " is installed.")
+    else
+      vim.fn["health#report_error"](p.url .. " not found.")
+    end
+  end
+
+  vim.fn["health#report_start"] "Checking for optional plugins"
+  for _, p in pairs(optional_plugins) do
     if lualib_installed(p.name) then
       vim.fn["health#report_ok"](p.url .. " is installed.")
     else
