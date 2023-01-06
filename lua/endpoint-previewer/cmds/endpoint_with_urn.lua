@@ -32,6 +32,7 @@ M.endpoint_with_urn = function(opts)
     attach_mappings = function(_, map)
       require("telescope.actions").select_default:replace(actions.telescope_select_endpoint)
       map('n', 'c', actions.telescope_compare_endpoint)
+      map('n', 'b', actions.telescope_debug_endpoint)
 
       return true
     end

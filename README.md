@@ -18,6 +18,7 @@ editor.
 - Load endpoint from 2 first base urls in separate windows with scoll lock, for
   easy comparison
 - Load endpoint in diff view between base url 1 and 2
+- Debug mode; Opens DAP UI and starts debugging mode on opening an endpoint
 
 ## Getting started
 
@@ -88,12 +89,21 @@ to ensure that everything is set up correctly.
 
 ## Usage
 
+To enter normal mode in the telescope selector, use `<esc>` after selecting
+the endpoint you want to work on.
+
 Use `c` in normal mode in any telescope selector for endpoints to open the
 endpoint in two windows (`base_url[1]` and `base_url[2]`) for comparison.
 
 Use `d` to open a similar view to `c`, but with diff mode enabled, showing the
 differences between the endpoints. The differences can be navigated by using
 `[c` and `]c`.
+
+Use `b` to open debug mode. This requires `dap` and `dapui` installed - use 
+`:checkhealth endpoint-previewer` to verify. Debug mode opens DAP UI and starts 
+DAP, then triggers loading the endpoint from the selected base url. When the 
+endpoint has finished loading the debugger will stop and the UI will close 
+automatically.
 
 ### Vim Commands
 
@@ -127,7 +137,10 @@ differences between the endpoints. The differences can be navigated by using
 ```vim 
 require('endpoint-previewer').setup() 
 vim.keymap.set('n', '<leader>sg', '<cmd>EndpointGoto<cr>', {}) 
-vim.keymap.set('n', '<leader>sr', '<cmd>EndpointRecents<cr>', {}) vim.keymap.set('n', '<leader>se', '<cmd>EndpointEndpoints<cr>', {}) vim.keymap.set('n', '<leader>su', '<cmd>EndpointRefresh<cr>', {}) vim.keymap.set('n', '<leader>sa', '<cmd>EndpointAPI<cr>', {}) 
+vim.keymap.set('n', '<leader>sr', '<cmd>EndpointRecents<cr>', {}) 
+vim.keymap.set('n', '<leader>se', '<cmd>EndpointEndpoints<cr>', {}) 
+vim.keymap.set('n', '<leader>su', '<cmd>EndpointRefresh<cr>', {}) 
+vim.keymap.set('n', '<leader>sa', '<cmd>EndpointAPI<cr>', {}) 
 vim.keymap.set('n', '<leader>sb', '<cmd>EndpointBaseUrl<cr>', {}) 
 ```
 

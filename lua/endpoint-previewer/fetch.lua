@@ -49,6 +49,9 @@ function M.fetch_and_display(fetchUrl, opts)
     else
       print("Got status code " .. result.status_code .. " for " .. fetchUrl)
     end
+    if opts.debug then
+      require("endpoint-previewer.dap").stop()
+    end
   end
 
   print("Fetching " .. fetchUrl .. "... ")
