@@ -22,11 +22,16 @@ editor.
 
 ## Getting started
 
+Use `:checkhealth endpoint-previewer` to verify that all required plugins and
+binaries are installed correctly.
+
 ### Required plugins
 
 - [sqlite.lua](https://github.com/kkharji/sqlite.lua) (required)
 - [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) (required)
 - [plenary.nvim](https://github.com/nvim-lua/plenary.nvim) (required)
+- [nvim-dap](https://github.com/mfussenegger/nvim-dap) (optional, for debug mode)
+- [nvim-dap-ui](https://github.com/rcarriga/nvim-dap-ui) (optional, for debug mode)
 
 ### Required binaries
 
