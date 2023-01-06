@@ -11,7 +11,10 @@ M.start = function()
     require("dapui").open()
     state.opened = true
   else
-    print("Unable to start the DAP UI for debugger. Try `:checkhealth endpoints-previewer` to confirm if it is installed.")
+    print(
+      "Unable to start the DAP UI for debugger. " ..
+      "Try `:checkhealth endpoints-previewer` to confirm if it is installed."
+    )
   end
 
   local dapok, _ = pcall(require, 'dap')
@@ -19,7 +22,10 @@ M.start = function()
     require("dap").continue()
     state.started = true
   else
-    print("Unable to start DAP debugger. Try `:checkhealth endpoints-previewer` to confirm if it is installed.")
+    print(
+      "Unable to start DAP debugger. " ..
+      "Try `:checkhealth endpoints-previewer` to confirm if it is installed."
+    )
   end
 end
 
