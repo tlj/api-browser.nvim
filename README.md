@@ -98,7 +98,7 @@ To enter normal mode in the telescope selector, use `<esc>` after selecting
 the endpoint you want to work on.
 
 Use `c` in normal mode in any telescope selector for endpoints to open the
-endpoint in two windows (`base_url[1]` and `base_url[2]`) for comparison.
+endpoint in two windows (selected remote env and selected dev env) for comparison.
 
 Use `d` to open a similar view to `c`, but with diff mode enabled, showing the
 differences between the endpoints. The differences can be navigated by using

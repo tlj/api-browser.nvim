@@ -14,10 +14,10 @@ M.endpoint_with_urn = function(opts)
   local txt = vim.treesitter.query.get_node_text(node, bufnr)
   txt = txt:gsub('"','')
 
-  local urn_endpoints = endpoints.get_endpoint_by_api_name_and_urn(conf.options.package, txt)
+  local urn_endpoints = endpoints.get_endpoint_by_api_name_and_urn(conf.get_selected_api(), txt)
 
   require("telescope.pickers").new(opts, {
-    prompt_title = "Endpoints for urn " .. txt .. " (" .. conf.options.base_url .. ")",
+    prompt_title = "Endpoints for urn " .. txt .. " (" .. conf.get_selected_env() .. ")",
     finder = require("telescope.finders").new_table {
       results = urn_endpoints,
       entry_maker = function(entry)

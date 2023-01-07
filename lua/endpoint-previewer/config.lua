@@ -1,87 +1,88 @@
 local db = require("endpoint-previewer.db")
 
 local M = {
-  options = {},
-  endpoints = {},
-  packages = {},
-  package = '',
-}
-
-local default = {
-  package = '',
-  base_url = '',
-  keep_state = true,
-  -- base_urls should not be set and pushed to github, use
-  -- environment variable ENDPOINT_PREVIEWER_URLS instead
-  base_urls = {}
+  options = {
+    keep_state = true,
+    selected_api = '',
+    selected_env = 'dev',
+    selected_remote_env = 'prod',
+    env_base_urls = {}
+  },
 }
 
 M.set_options = function (opts)
   M.options = opts
 end
 
-M.set_endpoints = function (endpoints)
-  M.endpoints = endpoints
+M.set_selected_api = function(api)
+  M.options.selected_api = api
 end
 
-M.set_packages = function(packages)
-  M.packages = packages
+M.get_selected_api = function()
+  return M.options.selected_api
 end
 
-M.set_package = function(package)
-  M.options.package = package
+M.get_selected_env = function()
+  return M.options.selected_env
 end
 
-M.set_base_url = function(base_url)
-  M.options.base_url = base_url
-  require("endpoint-previewer.endpoints").set_url(base_url .. "/endpoints.json")
+M.set_selected_env = function(env)
+  M.options.selected_env = env
+  db.set_default('selected_env', env)
+end
+
+M.set_selected_remote_env = function(env)
+  M.options.selected_remote_env = env
+  db.set_default('selected_remote_env', env)
+end
+
+M.selected_base_url = function()
+  return M.options.env_base_urls[M.options.selected_env]
+end
+
+M.selected_remote_base_url = function()
+  return M.options.env_base_urls[M.options.selected_remote_env]
+end
+
+M.get_environments = function()
+  local result = {}
+  for k, v in pairs(M.options.env_base_urls or {}) do
+    table.insert(result, { name = k, url = v })
+  end
+  return result
 end
 
 M.setup = function(opts)
   opts = opts or {}
 
-  if opts.base_urls ~= nil and next(opts.base_urls) ~= nil then
-    print("Warning: base_urls should be set with env variable ENDPOINT_PREVIEWER_URLS, semicolon separated.")
-  end
+  local options = M.options
 
-  local options = {}
-  for k, v in pairs(default) do
+  for k, v in pairs(opts) do
     options[k] = v
   end
 
   local base_urls = os.getenv("ENDPOINT_PREVIEWER_URLS")
   if base_urls ~= nil then
     for str in string.gmatch(base_urls, "([^;]+)") do
-      table.insert(options.base_urls, str)
-    end
-  else
-    print("ENDPOINT_PREVIEWER_URLS is empty.")
-  end
-
-  for k, v in pairs(opts) do
-    options[k] = v
-  end
-
-  if options.keep_state then
-    for k, _ in pairs(default) do
-      local v = db.get_default(k)
-      if v ~= nil then
-        options[k] = v
+      local split_result = {}
+      for m in string.gmatch(str, "([^=]+)") do
+        table.insert(split_result, m)
       end
+      options.env_base_urls[split_result[1]] = split_result[2]
     end
   end
 
-  if options.base_url == "" then
-    local bu = options.base_urls[1]
-    if bu ~= nil then
-      M.set_base_url(bu)
-    end
-  else
-    M.set_base_url(options.base_url)
-  end
+--  if options.keep_state then
+--    for k, _ in pairs(M.options) do
+--      local v = db.get_default(k)
+--      if v ~= nil then
+--        options[k] = v
+--      end
+--    end
+--  end
 
   M.options = options
 end
 
-
 return M
+

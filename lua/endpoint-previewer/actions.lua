@@ -10,9 +10,6 @@ end
 
 function M.telescope_select_endpoint(buf, opts)
   opts = opts or {}
--- multi select code
---  local num_selections = require("telescope.actions.state").get_current_picker(buf):get_multi_selection()
--- print(vim.inspect(num_selections))
 
   require("telescope.actions").close(buf)
   local selection = require("telescope.actions.state").get_selected_entry()
@@ -36,15 +33,16 @@ function M.telescope_select_endpoint(buf, opts)
     require("endpoint-previewer.dap").start()
   end
 
+  local base_url = conf.set_selected_env()
   vim.api.nvim_command('botright vnew')
   local nbuf = vim.api.nvim_get_current_buf()
   if opts.debug then
     vim.defer_fn(function()
-      fetch.fetch_and_display(conf.options.base_url .. selected, vim.tbl_extend("force", opts, {buf = nbuf}))
+      fetch.fetch_and_display(base_url .. selected, vim.tbl_extend("force", opts, {buf = nbuf}))
     end, 500)
   else
     vim.schedule(function()
-      fetch.fetch_and_display(conf.options.base_url .. selected, vim.tbl_extend("force", opts, {buf = nbuf}))
+      fetch.fetch_and_display(base_url .. selected, vim.tbl_extend("force", opts, {buf = nbuf}))
     end)
   end
 end
@@ -95,11 +93,13 @@ function M.telescope_compare_endpoint(buf, opts)
   vim.api.nvim_set_option_value("wrap", false, win2opts)
   vim.api.nvim_win_set_option(win2, "scrollbind", true)
 
+  local remote_base_url = conf.selected_remote_base_url()
+  local base_url = conf.selected_base_url()
   vim.schedule(function()
-    fetch.fetch_and_display(conf.options.base_urls[2] .. selected, vim.tbl_extend("force", opts, {buf = buf1}))
+    fetch.fetch_and_display(remote_base_url .. selected, vim.tbl_extend("force", opts, {buf = buf1}))
   end)
   vim.schedule(function()
-    fetch.fetch_and_display(conf.options.base_urls[1] .. selected, vim.tbl_extend("force", opts, {buf = buf2}))
+    fetch.fetch_and_display(base_url .. selected, vim.tbl_extend("force", opts, {buf = buf2}))
   end)
 end
 

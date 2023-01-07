@@ -7,13 +7,13 @@ local M = {}
 M.endpoints = function(opts)
   opts = opts or {}
 
-  local parsed_urls = endpoints.get_by_api_name(conf.options.package)
+  local parsed_urls = endpoints.get_by_api_name(conf.get_selected_api())
   if not parsed_urls then
     parsed_urls = {}
   end
 
   require("telescope.pickers").new(opts, {
-    prompt_title = "Endpoints (" .. conf.options.base_url .. ")",
+    prompt_title = "Endpoints (" .. conf.get_selected_env() .. ")",
     finder = require("telescope.finders").new_table {
       results = parsed_urls,
       entry_maker = function(entry)
