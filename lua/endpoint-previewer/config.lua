@@ -72,14 +72,14 @@ M.setup = function(opts)
     end
   end
 
---  if options.keep_state then
---    for k, _ in pairs(M.options) do
---      local v = db.get_default(k)
---      if v ~= nil then
---        options[k] = v
---      end
---    end
---  end
+  if options.keep_state then
+    for k, _ in pairs(M.options) do
+      local v = db.get_default(k)
+      if v ~= nil then
+        options[k] = v
+      end
+    end
+  end
 
   M.options = options
 end
