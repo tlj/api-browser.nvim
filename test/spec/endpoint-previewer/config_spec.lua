@@ -41,6 +41,23 @@ describe("endpoint-preview.config", function()
       assert.is_same({staging = "https://staging"}, module.options.env_base_urls)
     end)
 
+    it("returns a full endpoint url", function()
+      module.setup({env_base_urls={dev="https://localhost",nonprod="https://nonprod"}})
+      module.set_selected_env("nonprod")
+      assert.equals("https://nonprod/endpoints.json", module.endpoints_url())
+    end)
+
+    it("returns a full endpoint url, with custom endpoints path", function()
+      module.setup({env_base_urls={dev="https://localhost",nonprod="https://nonprod"}, endpoints_url_path = "/endpoints/routes.json" })
+      module.set_selected_env("nonprod")
+      assert.equals("https://nonprod/endpoints/routes.json", module.endpoints_url())
+    end)
+
+    it("returns a full endpoint url, with custom endpoints path, without selecting env", function()
+      module.setup({env_base_urls={dev="https://localhost",nonprod="https://nonprod"}, endpoints_url_path = "/endpoints/routes.json", env = "nonprod" })
+      assert.equals("https://nonprod/endpoints/routes.json", module.endpoints_url())
+    end)
+
     it("merges base_url env from options and env", function()
       os.getenv.on_call_with("ENDPOINT_PREVIEWER_URLS").returns("staging=https://staging")
       module.setup({env_base_urls={dev="https://localhost"}, selected_env='dev'})

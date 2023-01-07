@@ -6,7 +6,9 @@ local M = {
     selected_api = '',
     selected_env = 'dev',
     selected_remote_env = 'prod',
-    env_base_urls = {}
+    env_base_urls = {},
+    endpoints_url_path = '/endpoints.json',
+    endpoints_file = '',
   },
 }
 
@@ -24,6 +26,10 @@ end
 
 M.get_selected_env = function()
   return M.options.selected_env
+end
+
+M.endpoints_url = function()
+  return M.selected_base_url() .. M.options.endpoints_url_path
 end
 
 M.set_selected_env = function(env)
