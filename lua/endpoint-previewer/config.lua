@@ -28,6 +28,10 @@ M.get_selected_env = function()
   return M.options.selected_env
 end
 
+M.get_selected_remote_env = function()
+  return M.options.selected_remote_env
+end
+
 M.endpoints_file = function()
   return M.options.endpoints_file
 end
