@@ -25,6 +25,7 @@ function M.fetch_and_display(fetchUrl, opts)
   vim.api.nvim_buf_set_option(buf, 'buftype', 'nofile')
   vim.api.nvim_buf_set_option(buf, 'swapfile', false)
   vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')
+  vim.api.nvim_buf_set_keymap(buf, 'n', 'q', ':q<cr>', {})
   vim.api.nvim_put({"Fetching " .. fetchUrl .. "..."}, "", false, false)
   if opts.diff then
     vim.cmd('diffthis')
