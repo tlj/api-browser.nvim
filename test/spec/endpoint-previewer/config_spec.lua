@@ -2,6 +2,7 @@ local stub = require('luassert.stub')
 local db = require('endpoint-previewer.db')
 
 describe("endpoint-preview.config", function()
+  db.dbdir = "/tmp/"
   db.dbfile = "test.db"
   vim.fn.setenv("ENDPOINT_PREVIEWER_URLS", "")
 
