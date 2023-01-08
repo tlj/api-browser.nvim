@@ -1,16 +1,18 @@
 local sqlite = require "sqlite"
-local dbdir = vim.fn.stdpath "data" .. "/databases"
 
-local M = {}
+local M = {
+  dbdir = vim.fn.stdpath "data" .. "/databases/",
+  dbfile = "endpoint-previewer.db"
+}
 local db = {}
 
 function M.init()
   if next(db) == nil then
-    if not vim.loop.fs_stat(dbdir) then
-      vim.loop.fs_mkdir(dbdir, 493)
+    if not vim.loop.fs_stat(M.dbdir) then
+      vim.loop.fs_mkdir(M.dbdir, 493)
     end
     db = sqlite {
-      uri = dbdir .. "/endpoint-previewer.db",
+      uri = M.dbdir .. M.dbfile,
       entries = {
        id = true,
        url = "text",
@@ -22,6 +24,11 @@ function M.init()
       }
    }
   end
+end
+
+function M.remove()
+  pcall(os.remove, M.dbdir .. M.dbfile)
+  db = {}
 end
 
 function M.set_default(name, value)

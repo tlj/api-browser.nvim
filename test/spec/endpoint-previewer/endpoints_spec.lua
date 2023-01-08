@@ -1,5 +1,18 @@
 describe("endpoint-previewer.endpoints", function()
   local module = require("endpoint-previewer.endpoints")
+  local db = require("endpoint-previewer.db")
+
+  db.dbdir = "/tmp/"
+  db.dbfile = "test.db"
+  vim.fn.setenv("ENDPOINT_PREVIEWER_URLS", "")
+
+  before_each(function()
+    db.remove()
+  end)
+
+  after_each(function()
+    db.remove()
+  end)
 
   describe("is loaded", function()
     it("is not loaded", function()
@@ -26,6 +39,21 @@ describe("endpoint-previewer.endpoints", function()
     it("has errors", function()
       local result = module.get_by_api_name("invalid api")
       assert.is_nil(result)
+    end)
+  end)
+
+  describe("selects the correct file or url to load", function()
+    after_each(function()
+       package.loaded["endpoint-previewer.config"] = nil
+    end)
+
+    it("prefers endpoints_file if configured", function()
+      local conf = require("endpoint-previewer.config")
+      conf.setup({
+        endpoints_file = "test/fixtures/endpoints.json"
+      })
+      module.load()
+      assert.is_true(module.is_loaded())
     end)
   end)
 
