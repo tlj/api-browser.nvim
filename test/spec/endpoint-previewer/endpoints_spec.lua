@@ -1,5 +1,18 @@
 describe("endpoint-previewer.endpoints", function()
   local module = require("endpoint-previewer.endpoints")
+  local db = require("endpoint-previewer.db")
+
+  db.dbdir = "/tmp/"
+  db.dbfile = "test.db"
+  vim.fn.setenv("ENDPOINT_PREVIEWER_URLS", "")
+
+  before_each(function()
+    db.remove()
+  end)
+
+  after_each(function()
+    db.remove()
+  end)
 
   describe("is loaded", function()
     it("is not loaded", function()
