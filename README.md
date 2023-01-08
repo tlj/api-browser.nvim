@@ -94,6 +94,10 @@ to ensure that everything is set up correctly.
 
 ## Usage
 
+Use `q` to close endpoint previews from normal mode.
+
+### Pickers
+
 To enter normal mode in the telescope selector, use `<esc>` after selecting
 the endpoint you want to work on.
 
@@ -113,9 +117,13 @@ automatically.
 ### Vim Commands
 
 ```vim 
-" Select a base url from the list defined in ENDPOINT_PREVIEWER_URLS.
-" This will be used in subsequent lookups. 
-:EndpointBaseUrl 
+" Select the environment which should be used by default, and as the 
+" target environment for diff view
+:EndpointSelectEnv
+
+" Select the environment which should be used as the source environment
+" for the diff view
+:EndpointSelectRemoteEnv
 
 " Select an API to use when using the endpoints selector. 
 :EndpointAPI 

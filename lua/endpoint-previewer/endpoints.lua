@@ -29,8 +29,15 @@ end
 
 M.load = function()
   M.loaded = false
-  if M.url == "" then M.parse_url(conf.endpoints_url()) end
-  M.parse_url(M.url)
+  if M.url == "" then
+    if conf.endpoints_file() ~= "" then
+      M.parse_file(conf.endpoints_file())
+    else
+      M.parse_url(conf.endpoints_url())
+    end
+  else
+    M.parse_url(M.url)
+  end
 end
 
 M.get_api_names = function()

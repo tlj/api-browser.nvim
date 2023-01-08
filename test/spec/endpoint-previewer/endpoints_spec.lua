@@ -29,6 +29,21 @@ describe("endpoint-previewer.endpoints", function()
     end)
   end)
 
+  describe("selects the correct file or url to load", function()
+    after_each(function()
+       package.loaded["endpoint-previewer.config"] = nil
+    end)
+
+    it("prefers endpoints_file if configured", function()
+      local conf = require("endpoint-previewer.config")
+      conf.setup({
+        endpoints_file = "test/fixtures/endpoints.json"
+      })
+      module.load()
+      assert.is_true(module.is_loaded())
+    end)
+  end)
+
   describe("endpoint defaults", function()
     it("replaces an array of an replacement", function()
       local result = module.replace_with_defaults({url="/matches.{format}"},{format={"json","xml"}})

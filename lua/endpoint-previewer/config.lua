@@ -28,6 +28,10 @@ M.get_selected_env = function()
   return M.options.selected_env
 end
 
+M.endpoints_file = function()
+  return M.options.endpoints_file
+end
+
 M.endpoints_url = function()
   return M.selected_base_url() .. M.options.endpoints_url_path
 end

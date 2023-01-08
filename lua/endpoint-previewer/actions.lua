@@ -33,7 +33,7 @@ function M.telescope_select_endpoint(buf, opts)
     require("endpoint-previewer.dap").start()
   end
 
-  local base_url = conf.set_selected_env()
+  local base_url = conf.selected_base_url()
   vim.api.nvim_command('botright vnew')
   local nbuf = vim.api.nvim_get_current_buf()
   if opts.debug then
