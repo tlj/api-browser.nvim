@@ -75,14 +75,13 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 	}, 
 	config = function() require("endpoint-previewer").setup() end, 
 	keys = { 
-		{ "<leader>sg", "<cmd>EndpointGoto<cr>", desc = "Open API endpoints valid for replacement text on cursor." }, 
-		{ "<leader>sr", "<cmd>EndpointRecents<cr>", desc = "Open list of recently opened API endpoints." }, 
-		{ "<leader>se", "<cmd>EndpointEndpoints<cr>", desc = "Open list of endpoints for current API." }, 
-		{ "<leader>su", "<cmd>EndpointRefresh<cr>", desc = "Refresh list of APIs and
-Endpoints." }, 
-		{ "<leader>sa", "<cmd>EndpointAPI<cr>", desc = "Select an API." }, 
-		{ "<leader>sb", "<cmd>EndpointBaseUrl<cr>", desc = "Select a base URL to
-fetch endpoints from." }, 
+		{ "<leader>sg", "<cmd>EndpointGoto<cr>", desc = "Open API endpoints valid for replacement text on cursor." },
+		{ "<leader>sr", "<cmd>EndpointRecents<cr>", desc = "Open list of recently opened API endpoints." },
+		{ "<leader>se", "<cmd>EndpointEndpoints<cr>", desc = "Open list of endpoints for current API." },
+		{ "<leader>su", "<cmd>EndpointRefresh<cr>", desc = "Refresh list of APIs and Endpoints." },
+		{ "<leader>sa", "<cmd>EndpointAPI<cr>", desc = "Select an API." },
+    { "<leader>sd", "<cmd>EndpointSelectEnv<cr>", desc = "Select environment." },
+    { "<leader>sx", "<cmd>EndpointSelectRemoteEnv<cr>", desc = "Select remote environment." },
 	}, 
 } 
 ```
@@ -154,7 +153,8 @@ vim.keymap.set('n', '<leader>sr', '<cmd>EndpointRecents<cr>', {})
 vim.keymap.set('n', '<leader>se', '<cmd>EndpointEndpoints<cr>', {}) 
 vim.keymap.set('n', '<leader>su', '<cmd>EndpointRefresh<cr>', {}) 
 vim.keymap.set('n', '<leader>sa', '<cmd>EndpointAPI<cr>', {}) 
-vim.keymap.set('n', '<leader>sb', '<cmd>EndpointBaseUrl<cr>', {}) 
+vim.keymap.set('n', '<leader>sd', '<cmd>EndpointSelectEnv<cr>', {})
+vim.keymap.set('n', '<leader>sx', '<cmd>EndpointSelectRemoteEnv<cr>', {})
 ```
 
 ### Database location
