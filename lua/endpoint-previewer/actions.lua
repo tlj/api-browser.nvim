@@ -20,11 +20,8 @@ function M.telescope_select_endpoint(buf, opts)
 
   local selected = selection.value.url
   for _, idPlaceHolder in pairs(selection.value.placeholders or {}) do
-    vim.ui.input({
-      prompt = idPlaceHolder .. ": ",
-    }, function(idInput)
-      selected = string.gsub(selected, "{" .. idPlaceHolder .. "}", idInput)
-    end)
+    local idInput = vim.fn.input(idPlaceHolder .. ": ")
+    selected = string.gsub(selected, "{" .. idPlaceHolder .. "}", idInput)
   end
 
   db.push_history(selected)
