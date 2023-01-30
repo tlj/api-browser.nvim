@@ -24,7 +24,6 @@ M.select_api = function(opts)
           return
         end
 
-        print("Setting package " .. selection[1])
         conf.set_selected_api(selection[1])
         db.set_default("package", conf.get_selected_api())
       end)

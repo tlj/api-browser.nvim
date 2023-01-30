@@ -18,6 +18,7 @@ end
 
 M.set_selected_api = function(api)
   M.options.selected_api = api
+  db.set_default('selected_api', api)
 end
 
 M.get_selected_api = function()
