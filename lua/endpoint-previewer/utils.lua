@@ -1,5 +1,30 @@
 local M = {}
 
+function M.new_or_existing_buffer(name, pos, opt)
+  opt = opt or {}
+  for _, bufnr in pairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_get_name(bufnr) == name then
+      local lines = vim.api.nvim_buf_line_count(bufnr)
+      vim.api.nvim_buf_set_lines(bufnr, 0, lines, false, {})
+      if not opt.noplaceholder then
+        vim.api.nvim_buf_call(bufnr, function()
+          vim.api.nvim_put({"Fetching " .. name .. "..."}, "", false, false)
+        end)
+      end
+
+      return bufnr
+    end
+  end
+
+  vim.api.nvim_command(pos)
+
+  if not opt.noplaceholder then
+    vim.api.nvim_put({"Fetching " .. name .. "..."}, "", false, false)
+  end
+
+  return vim.api.nvim_get_current_buf()
+end
+
 function M.ends_with(str, ending)
   return ending == "" or str:sub(-#ending) == ending
 end

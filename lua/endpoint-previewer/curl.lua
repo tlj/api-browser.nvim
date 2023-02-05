@@ -72,14 +72,14 @@ M.format_output = function(url, body_file, opts)
         opts.cwd
       )
       if ret ~= 0 then
-        print("Error " .. ret .. " while calling " .. cmd[1] .. " to format output: " .. err[1])
+        vim.notify("Error " .. ret .. " while calling " .. cmd[1] .. " to format output: " .. err[1])
         return original_body
       end
       return body
     end
   end
 
-  print("No matching formatter found for " .. url)
+  vim.notify("No matching formatter found for " .. url)
   return original_body
 end
 

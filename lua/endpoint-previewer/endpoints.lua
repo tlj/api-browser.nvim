@@ -53,6 +53,21 @@ M.get_api_names = function()
   return result
 end
 
+M.get_apis = function()
+  if not M.is_loaded() then M.load() end
+
+  local result = {}
+  for k, v in pairs(M.json.apis) do
+    table.insert(result, {
+      name = k,
+      package = v.package,
+      version = v.version,
+    })
+  end
+
+  return result
+end
+
 M.get_endpoint_by_api_name_and_urn = function(api_name, urn)
   if not M.is_loaded() then M.load() end
 
