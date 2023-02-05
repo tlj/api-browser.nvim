@@ -10,9 +10,7 @@ function M.telescope_debug_endpoint(buf)
   M.telescope_select_endpoint(buf, {debug = true})
 end
 
-function M.telescope_test_api(buf, opts)
-  opts = opts or {}
-
+function M.telescope_test_api(buf)
   require("telescope.actions").close(buf)
   local selection = require("telescope.actions.state").get_selected_entry()
   if not selection then
@@ -23,9 +21,7 @@ function M.telescope_test_api(buf, opts)
   vim.notify("Testing " .. selection.value.package .. " " .. selection.value.version)
 end
 
-function M.telescope_test_endpoint(buf, opts)
-  opts = opts or {}
-
+function M.telescope_test_endpoint(buf)
   require("telescope.actions").close(buf)
   local selection = require("telescope.actions.state").get_selected_entry()
   if not selection then
@@ -41,14 +37,16 @@ function M.telescope_test_endpoint(buf, opts)
 
   db.push_history(selected)
 
-  M.test_endpoint(selected, opts)
+  M.test_endpoint(selected)
 end
 
-function M.test_endpoint(selected, opts)
-  opts = opts or {}
-
+function M.test_endpoint(selected)
   local base_url = conf.selected_base_url()
-  local buf = utils.new_or_existing_buffer("api-tester " .. base_url .. selected, 'botright vnew', {noplaceholder = true})
+  local buf = utils.new_or_existing_buffer(
+    "api-tester " .. base_url .. selected,
+    'botright vnew',
+    {noplaceholder = true}
+  )
   vim.api.nvim_buf_set_option(buf, 'buftype', 'nofile')
   vim.api.nvim_buf_set_option(buf, 'swapfile', false)
   vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')
@@ -77,7 +75,6 @@ function M.test_endpoint(selected, opts)
     table.insert(args, remote_base_url)
   end
   vim.schedule(function()
-    local output = {}
     local idx = 0
     Job:new({
       command = "api-tester",
@@ -94,7 +91,7 @@ function M.test_endpoint(selected, opts)
         end)
         idx = idx + 1
       end,
-      on_exit = function(_, line)
+      on_exit = function(_, _)
         vim.schedule(function()
           on_stdout("Done", idx)
         end)
@@ -130,9 +127,27 @@ function M.telescope_select_endpoint(buf, opts)
   local nbuf = utils.new_or_existing_buffer(base_url .. selected, 'botright vnew')
   local fetchUrl = base_url .. selected
 
-  vim.api.nvim_buf_set_keymap(nbuf, 'n', 'r', ':lua require("endpoint-previewer.fetch").fetch_and_display("' .. fetchUrl .. '", {})<cr>', {})
-  vim.api.nvim_buf_set_keymap(nbuf, 'n', 'd', ':lua require("endpoint-previewer.actions").diff_endpoint("' .. selected .. '", {})<cr>', {})
-  vim.api.nvim_buf_set_keymap(nbuf, 'n', 't', ':lua require("endpoint-previewer.actions").test_endpoint("' .. selected .. '", {})<cr>', {})
+  vim.api.nvim_buf_set_keymap(
+    nbuf,
+    'n',
+    'r',
+    ':lua require("endpoint-previewer.fetch").fetch_and_display("' .. fetchUrl .. '", {})<cr>',
+    {}
+  )
+  vim.api.nvim_buf_set_keymap(
+    nbuf,
+    'n',
+    'd',
+    ':lua require("endpoint-previewer.actions").diff_endpoint("' .. selected .. '", {})<cr>',
+    {}
+  )
+  vim.api.nvim_buf_set_keymap(
+    nbuf,
+    'n',
+    't',
+    ':lua require("endpoint-previewer.actions").test_endpoint("' .. selected .. '", {})<cr>',
+    {}
+  )
 
   if opts.debug then
     vim.defer_fn(function()
