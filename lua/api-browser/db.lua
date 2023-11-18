@@ -2,7 +2,7 @@ local sqlite = require "sqlite"
 
 local M = {
   dbdir = vim.fn.stdpath "data" .. "/databases/",
-  dbfile = "endpoint-previewer.db"
+  dbfile = "api-browser.db"
 }
 local db = {}
 

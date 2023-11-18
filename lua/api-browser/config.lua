@@ -1,4 +1,4 @@
-local db = require("endpoint-previewer.db")
+local db = require("api-browser.db")
 
 local M = {
   options = {
@@ -76,7 +76,7 @@ M.setup = function(opts)
     options[k] = v
   end
 
-  local base_urls = os.getenv("ENDPOINT_PREVIEWER_URLS")
+  local base_urls = os.getenv("NVIM_API_BROWSER_URLS")
   if base_urls ~= nil then
     for str in string.gmatch(base_urls, "([^;]+)") do
       local split_result = {}

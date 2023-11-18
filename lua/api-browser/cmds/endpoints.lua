@@ -1,30 +1,28 @@
-local db = require("endpoint-previewer.db")
-local utils = require("endpoint-previewer.utils")
-local actions = require("endpoint-previewer.actions")
+local actions = require("api-browser.actions")
+local conf = require("api-browser.config")
+local endpoints = require("api-browser.endpoints")
 
 local M = {}
 
-M.recents = function(opts)
+M.endpoints = function(opts)
   opts = opts or {}
-  local entries = db.get_entries()
-  table.sort(entries, function (k1, k2)
-    return k1.last_used > k2.last_used
-  end)
-  local urls = utils.map(entries, function(entry)
-    -- return { url = row.url, last_used = row.last_used }
-    return { url = entry.url }
-  end)
+
+  local parsed_urls = endpoints.get_by_api_name(conf.get_selected_api())
+  if not parsed_urls then
+    parsed_urls = {}
+  end
+
   require("telescope.pickers").new(opts, {
-    prompt_title = "",
+    prompt_title = "Endpoints (" .. conf.get_selected_env() .. ")",
     finder = require("telescope.finders").new_table {
-      results = urls,
+      results = parsed_urls,
       entry_maker = function(entry)
         return {
           value = entry,
           display = entry.url,
           ordinal = entry.url,
         }
-      end
+      end,
     },
     sorter = require("telescope.config").values.generic_sorter(opts),
     attach_mappings = function(_, map)
@@ -38,5 +36,6 @@ M.recents = function(opts)
     end
   }):find()
 end
+
 
 return M

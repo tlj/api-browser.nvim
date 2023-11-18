@@ -1,8 +1,8 @@
-local db = require("endpoint-previewer.db")
+local db = require("api-browser.db")
 local Job = require('plenary.job')
-local fetch = require("endpoint-previewer.fetch")
-local conf = require("endpoint-previewer.config")
-local utils = require("endpoint-previewer.utils")
+local fetch = require("api-browser.fetch")
+local conf = require("api-browser.config")
+local utils = require("api-browser.utils")
 
 local M = {}
 
@@ -120,7 +120,7 @@ function M.telescope_select_endpoint(buf, opts)
   db.push_history(selected)
 
   if opts.debug then
-    require("endpoint-previewer.dap").start()
+    require("api-browser.dap").start()
   end
 
   local base_url = conf.selected_base_url()
@@ -131,21 +131,21 @@ function M.telescope_select_endpoint(buf, opts)
     nbuf,
     'n',
     'r',
-    ':lua require("endpoint-previewer.fetch").fetch_and_display("' .. fetchUrl .. '", {})<cr>',
+    ':lua require("api-browser.fetch").fetch_and_display("' .. fetchUrl .. '", {})<cr>',
     {}
   )
   vim.api.nvim_buf_set_keymap(
     nbuf,
     'n',
     'd',
-    ':lua require("endpoint-previewer.actions").diff_endpoint("' .. selected .. '", {})<cr>',
+    ':lua require("api-browser.actions").diff_endpoint("' .. selected .. '", {})<cr>',
     {}
   )
   vim.api.nvim_buf_set_keymap(
     nbuf,
     'n',
     't',
-    ':lua require("endpoint-previewer.actions").test_endpoint("' .. selected .. '", {})<cr>',
+    ':lua require("api-browser.actions").test_endpoint("' .. selected .. '", {})<cr>',
     {}
   )
 

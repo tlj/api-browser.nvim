@@ -1,5 +1,5 @@
-local curl = require("endpoint-previewer.curl")
-local conf = require("endpoint-previewer.config")
+local curl = require("api-browser.curl")
+local conf = require("api-browser.config")
 
 local M = {
   loaded = false,
