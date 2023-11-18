@@ -1,6 +1,6 @@
-local files = require('endpoint-previewer.files')
+local files = require('api-browser.files')
 local Job = require('plenary.job')
-local utils = require('endpoint-previewer.utils')
+local utils = require('api-browser.utils')
 
 local M = {}
 

@@ -1,5 +1,5 @@
-local curl = require("endpoint-previewer.curl")
-local utils = require("endpoint-previewer.utils")
+local curl = require("api-browser.curl")
+local utils = require("api-browser.utils")
 
 local M = {}
 
@@ -51,7 +51,7 @@ function M.fetch_and_display(fetchUrl, opts)
 --      print("Got status code " .. result.status_code .. " for " .. fetchUrl)
 --    end
     if opts.debug then
-      require("endpoint-previewer.dap").stop()
+      require("api-browser.dap").stop()
     end
   end
 

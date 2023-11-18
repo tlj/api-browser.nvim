@@ -1,10 +1,10 @@
-describe("endpoint-previewer.endpoints", function()
-  local module = require("endpoint-previewer.endpoints")
-  local db = require("endpoint-previewer.db")
+describe("api-browser.endpoints", function()
+  local module = require("api-browser.endpoints")
+  local db = require("api-browser.db")
 
   db.dbdir = "/tmp/"
   db.dbfile = "test.db"
-  vim.fn.setenv("ENDPOINT_PREVIEWER_URLS", "")
+  vim.fn.setenv("NVIM_API_BROWSER_URLS", "")
 
   before_each(function()
     db.remove()
@@ -44,11 +44,11 @@ describe("endpoint-previewer.endpoints", function()
 
   describe("selects the correct file or url to load", function()
     after_each(function()
-       package.loaded["endpoint-previewer.config"] = nil
+       package.loaded["api-browser.config"] = nil
     end)
 
     it("prefers endpoints_file if configured", function()
-      local conf = require("endpoint-previewer.config")
+      local conf = require("api-browser.config")
       conf.setup({
         endpoints_file = "test/fixtures/endpoints.json"
       })

@@ -13,7 +13,7 @@ M.start = function()
   else
     print(
       "Unable to start the DAP UI for debugger. " ..
-      "Try `:checkhealth endpoints-previewer` to confirm if it is installed."
+      "Try `:checkhealth api-browser` to confirm if it is installed."
     )
   end
 
@@ -24,7 +24,7 @@ M.start = function()
   else
     print(
       "Unable to start DAP debugger. " ..
-      "Try `:checkhealth endpoints-previewer` to confirm if it is installed."
+      "Try `:checkhealth api-browser` to confirm if it is installed."
     )
   end
 end

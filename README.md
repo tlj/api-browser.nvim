@@ -1,6 +1,6 @@
-# Endpoint Previewer for Neovim
+# API Browser for Neovim
 
-[![tests](https://github.com/tlj/endpoint-previewer.nvim/actions/workflows/integration.yml/badge.svg)](https://github.com/tlj/endpoint-previewer.nvim/actions/workflows/integration.yml)
+[![tests](https://github.com/tlj/api-browser.nvim/actions/workflows/integration.yml/badge.svg)](https://github.com/tlj/api-browser.nvim/actions/workflows/integration.yml)
 
 A [Neovim](https://neovim.io/) plugin to browse API endpoints directly in the
 editor.
@@ -22,7 +22,7 @@ editor.
 
 ## Getting started
 
-Use `:checkhealth endpoint-previewer` to verify that all required plugins and
+Use `:checkhealth api-browser` to verify that all required plugins and
 binaries are installed correctly.
 
 ### Required plugins
@@ -47,14 +47,14 @@ An environment variable is required to set the base urls, as they should be left
 out of repositories commited to github.
 
 ```bash 
-$ export ENDPOINT_PREVIEWER_URLS="https://url1.example;https://url2.example" 
+$ export NVIM_API_BROWSER_URLS="https://url1.example;https://url2.example" 
 ```
 
 Using [packer.nvim](https://github.com/wbthomason/packer.nvim) 
 
 ```lua 
 use { 
-	"tlj/endpoint-previewer.nvim", 
+	"tlj/api-browser.nvim", 
 	{ 
 		"kkharji/sqlite.lua",
 		"nvim-lua/plenary.nvim", 
@@ -67,28 +67,28 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua 
 { 
-	"tlj/endpoint-previewer.nvim", 
+	"tlj/api-browser.nvim", 
 	dependencies = { 
 		"kkharji/sqlite.lua",
-        "nvim-lua/plenary.nvim", 
-        "nvim-telescope/telescope.nvim", 
+    "nvim-lua/plenary.nvim", 
+    "nvim-telescope/telescope.nvim", 
 	}, 
-	config = function() require("endpoint-previewer").setup() end, 
+	config = function() require("api-browser").setup() end, 
 	keys = { 
-		{ "<leader>sg", "<cmd>EndpointGoto<cr>", desc = "Open API endpoints valid for replacement text on cursor." },
-		{ "<leader>sr", "<cmd>EndpointRecents<cr>", desc = "Open list of recently opened API endpoints." },
-		{ "<leader>se", "<cmd>EndpointEndpoints<cr>", desc = "Open list of endpoints for current API." },
-		{ "<leader>su", "<cmd>EndpointRefresh<cr>", desc = "Refresh list of APIs and Endpoints." },
-		{ "<leader>sa", "<cmd>EndpointAPI<cr>", desc = "Select an API." },
-    { "<leader>sd", "<cmd>EndpointSelectEnv<cr>", desc = "Select environment." },
-    { "<leader>sx", "<cmd>EndpointSelectRemoteEnv<cr>", desc = "Select remote environment." },
+		{ "<leader>sg", "<cmd>ApiBrowserGoto<cr>", desc = "Open API endpoints valid for replacement text on cursor." },
+		{ "<leader>sr", "<cmd>ApiBrowserRecents<cr>", desc = "Open list of recently opened API endpoints." },
+		{ "<leader>se", "<cmd>ApiBrowserEndpoints<cr>", desc = "Open list of endpoints for current API." },
+		{ "<leader>su", "<cmd>ApiBrowserRefresh<cr>", desc = "Refresh list of APIs and Endpoints." },
+		{ "<leader>sa", "<cmd>ApiBrowserAPI<cr>", desc = "Select an API." },
+    { "<leader>sd", "<cmd>ApiBrowserSelectEnv<cr>", desc = "Select environment." },
+    { "<leader>sx", "<cmd>ApiBrowserSelectRemoteEnv<cr>", desc = "Select remote environment." },
 	}, 
 } 
 ```
 
 ### checkhealth
 
-Make sure you call `:checkhealth endpoint-previewer` after installing the plugin
+Make sure you call `:checkhealth api-browser` after installing the plugin
 to ensure that everything is set up correctly.
 
 ## Usage
@@ -108,7 +108,7 @@ differences between the endpoints. The differences can be navigated by using
 `[c` and `]c`.
 
 Use `b` to open debug mode. This requires `dap` and `dapui` installed - use 
-`:checkhealth endpoint-previewer` to verify. Debug mode opens DAP UI and starts 
+`:checkhealth api-browser` to verify. Debug mode opens DAP UI and starts 
 DAP, then triggers loading the endpoint from the selected base url. When the 
 endpoint has finished loading the debugger will stop and the UI will close 
 automatically.
@@ -118,43 +118,43 @@ automatically.
 ```vim 
 " Select the environment which should be used by default, and as the 
 " target environment for diff view
-:EndpointSelectEnv
+:ApiBrowserSelectEnv
 
 " Select the environment which should be used as the source environment
 " for the diff view
-:EndpointSelectRemoteEnv
+:ApiBrowserSelectRemoteEnv
 
 " Select an API to use when using the endpoints selector. 
-:EndpointAPI 
+:ApiBrowserAPI 
 
 " Select from a list of endpoints valid for the API. If an endpoint 
 " has a placeholder, the user will be prompted to enter a value. 
-:EndpointEndpoints 
+:ApiBrowserEndpoints 
 
 " Select from a list of recently used endpoints. The endpoint is 
 " not remembered by base url, so it can be used to quickly open 
 " the same endpoint across different base urls. 
-:EndpointRecents 
+:ApiBrowserRecents 
 
 " Look up current API endpoints with a placeholder with requirements 
 " matching the text the cursor is currently on. 
-:EndpointGoto 
+:ApiBrowserGoto 
 
 " Refresh the list of endpoints from the server (clear cache). 
-:EndpointRefresh 
+:ApiBrowserRefresh 
 ```
 
 ### Suggested mappings
 
 ```vim 
-require('endpoint-previewer').setup() 
-vim.keymap.set('n', '<leader>sg', '<cmd>EndpointGoto<cr>', {}) 
-vim.keymap.set('n', '<leader>sr', '<cmd>EndpointRecents<cr>', {}) 
-vim.keymap.set('n', '<leader>se', '<cmd>EndpointEndpoints<cr>', {}) 
-vim.keymap.set('n', '<leader>su', '<cmd>EndpointRefresh<cr>', {}) 
-vim.keymap.set('n', '<leader>sa', '<cmd>EndpointAPI<cr>', {}) 
-vim.keymap.set('n', '<leader>sd', '<cmd>EndpointSelectEnv<cr>', {})
-vim.keymap.set('n', '<leader>sx', '<cmd>EndpointSelectRemoteEnv<cr>', {})
+require('api-browser').setup() 
+vim.keymap.set('n', '<leader>sg', '<cmd>ApiBrowserGoto<cr>', {}) 
+vim.keymap.set('n', '<leader>sr', '<cmd>ApiBrowserRecents<cr>', {}) 
+vim.keymap.set('n', '<leader>se', '<cmd>ApiBrowserEndpoints<cr>', {}) 
+vim.keymap.set('n', '<leader>su', '<cmd>ApiBrowserRefresh<cr>', {}) 
+vim.keymap.set('n', '<leader>sa', '<cmd>ApiBrowserAPI<cr>', {}) 
+vim.keymap.set('n', '<leader>sd', '<cmd>ApiBrowserSelectEnv<cr>', {})
+vim.keymap.set('n', '<leader>sx', '<cmd>ApiBrowserSelectRemoteEnv<cr>', {})
 ```
 
 ### Database location

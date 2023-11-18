@@ -1,10 +1,10 @@
 local stub = require('luassert.stub')
-local db = require('endpoint-previewer.db')
+local db = require('api-browser.db')
 
-describe("endpoint-preview.config", function()
+describe("api-browser.config", function()
   db.dbdir = "/tmp/"
   db.dbfile = "test.db"
-  vim.fn.setenv("ENDPOINT_PREVIEWER_URLS", "")
+  vim.fn.setenv("NVIM_API_BROWSER_URLS", "")
 
   before_each(function()
     db.remove()
@@ -15,7 +15,7 @@ describe("endpoint-preview.config", function()
   end)
 
   describe("has a dev and prod base url", function()
-    local module = require("endpoint-previewer.config")
+    local module = require("api-browser.config")
     it("has dev url", function()
       module.setup({
         env_base_urls = {
@@ -31,7 +31,7 @@ describe("endpoint-preview.config", function()
   end)
 
   describe("takes base_url from env and config", function()
-    local module = require("endpoint-previewer.config")
+    local module = require("api-browser.config")
 
     before_each(function()
       stub(os, "getenv")
@@ -42,7 +42,7 @@ describe("endpoint-preview.config", function()
     end)
 
     it("gets staging env from os env", function()
-      os.getenv.on_call_with("ENDPOINT_PREVIEWER_URLS").returns("staging=https://staging")
+      os.getenv.on_call_with("NVIM_API_BROWSER_URLS").returns("staging=https://staging")
       module.setup({env_base_urls={}, selected_env='dev'})
       assert.is_same({staging = "https://staging"}, module.options.env_base_urls)
     end)
@@ -65,7 +65,7 @@ describe("endpoint-preview.config", function()
     end)
 
     it("merges base_url env from options and env", function()
-      os.getenv.on_call_with("ENDPOINT_PREVIEWER_URLS").returns("staging=https://staging")
+      os.getenv.on_call_with("NVIM_API_BROWSER_URLS").returns("staging=https://staging")
       module.setup({env_base_urls={dev="https://localhost"}, selected_env='dev'})
       assert.is_same({dev = "https://localhost", staging = "https://staging"}, module.options.env_base_urls)
       local envs = module.get_environments()

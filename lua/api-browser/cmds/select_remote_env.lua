@@ -1,29 +1,24 @@
-local conf = require("endpoint-previewer.config")
-local actions = require("endpoint-previewer.actions")
-local db = require("endpoint-previewer.db")
-local endpoints = require("endpoint-previewer.endpoints")
+local conf = require("api-browser.config")
 
 local M = {}
 
-M.select_api = function(opts)
+M.select_remote_env = function(opts)
   opts = opts or {}
 
-  local packages = endpoints.get_apis()
-
   require("telescope.pickers").new(opts, {
-    prompt_title = "Select a package (" .. conf.get_selected_env() .. ")",
+    prompt_title = "Select a remote environment",
     finder = require("telescope.finders").new_table {
-      results = packages,
+      results = conf.get_environments(),
       entry_maker = function(entry)
         return {
           value = entry,
-          display = entry.name,
-          ordinal = entry.name,
+          display = entry.name .. " (" .. entry.url .. ")",
+          ordinal = entry.name .. " (" .. entry.url .. ")",
         }
       end,
     },
     sorter = require("telescope.config").values.generic_sorter(opts),
-    attach_mappings = function(fbuf, map)
+    attach_mappings = function(fbuf)
       require("telescope.actions").select_default:replace(function()
         require("telescope.actions").close(fbuf)
         local selection = require("telescope.actions.state").get_selected_entry()
@@ -32,16 +27,12 @@ M.select_api = function(opts)
           return
         end
 
-        conf.set_selected_api(selection.value.name)
-        db.set_default("package", conf.get_selected_api())
+        conf.set_selected_remote_env(selection.value.name)
       end)
-
-      map('n', 't', actions.telescope_test_api)
-
       return true
     end
   }):find()
 end
 
-
 return M
+

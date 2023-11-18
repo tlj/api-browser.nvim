@@ -1,4 +1,4 @@
-local conf = require("endpoint-previewer.config")
+local conf = require("api-browser.config")
 
 local M = {}
 

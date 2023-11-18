@@ -11,7 +11,7 @@ vendor: clean
 	@git clone https://github.com/kkharji/sqlite.lua vendor/sqlite.lua
 
 test:
-	@nvim --headless --clean -u test/minimal_vim.vim -c "lua require('plenary.test_harness').test_directory('test/spec/endpoint-previewer', {minimal_init = './test/minimal_vim.vim', sequential = true})" +q
+	@nvim --headless --clean -u test/minimal_vim.vim -c "lua require('plenary.test_harness').test_directory('test/spec/api-browser', {minimal_init = './test/minimal_vim.vim', sequential = true})" +q
 
 
 
