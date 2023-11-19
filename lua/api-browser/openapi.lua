@@ -31,6 +31,15 @@ M.get_apis = function()
   return result
 end
 
+M.replace_placeholder = function(endpoint, name, value, params)
+  local rr = vim.deepcopy(endpoint)
+  rr.replaced = rr.replaced or {}
+  rr.url = rr.url:gsub("{" .. name .."}", value)
+  rr.replaced[name] = value
+
+  return M.replace_placeholders(rr, params)
+end
+
 M.replace_placeholders = function(endpoint, in_params)
   -- make a copy of the params since we are manipulating it
   local params = vim.deepcopy(in_params)
@@ -63,24 +72,14 @@ M.replace_placeholders = function(endpoint, in_params)
       end
 
       -- if we have a default we only expand that
-      local rr = vim.deepcopy(endpoint)
-      rr.replaced = rr.replaced or {}
-      rr.url = rr.url:gsub("{" .. fv.name .."}", fv.schema.default)
-      rr.replaced[fk] = fv.schema.default
-
-      local new = M.replace_placeholders(rr, params)
+      new = M.replace_placeholder(endpoint, fv.name, fv.schema.default, params)
       for _, n in pairs(new) do
         table.insert(result, n)
       end
     elseif fv.schema.enum then
       -- if we have an enum we expand all of them
       for _, e in pairs(fv.schema.enum) do
-        local rr = vim.deepcopy(endpoint)
-        rr.replaced = rr.replaced or {}
-        rr.url = rr.url:gsub("{" .. fv.name .."}", e)
-        rr.replaced[fk] = fv.schema.default
-
-        local new = M.replace_placeholders(rr, params)
+        local new = M.replace_placeholder(endpoint, fv.name, e, params)
         for _, n in pairs(new) do
           table.insert(result, n)
         end
@@ -89,6 +88,7 @@ M.replace_placeholders = function(endpoint, in_params)
   end
 
   -- return our endpoints, replaced or not
+  table.sort(result, compare_endpoints)
   return result
 end
 
