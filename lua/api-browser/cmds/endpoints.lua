@@ -1,19 +1,20 @@
 local actions = require("api-browser.actions")
 local conf = require("api-browser.config")
-local endpoints = require("api-browser.endpoints")
+local openapi = require("api-browser.openapi")
 
 local M = {}
 
 M.endpoints = function(opts)
   opts = opts or {}
 
-  local parsed_urls = endpoints.get_by_api_name(conf.get_selected_api())
+  openapi.parse_file(conf.get_selected_api())
+  local parsed_urls = openapi.parse_endpoints()
   if not parsed_urls then
     parsed_urls = {}
   end
 
   require("telescope.pickers").new(opts, {
-    prompt_title = "Endpoints (" .. conf.get_selected_env() .. ")",
+    prompt_title = "Endpoints (" .. conf.get_selected_server() .. ")",
     finder = require("telescope.finders").new_table {
       results = parsed_urls,
       entry_maker = function(entry)

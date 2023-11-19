@@ -1,19 +1,19 @@
 local conf = require("api-browser.config")
 local actions = require("api-browser.actions")
 local db = require("api-browser.db")
-local endpoints = require("api-browser.endpoints")
+local openapi = require("api-browser.openapi")
 
 local M = {}
 
 M.select_api = function(opts)
   opts = opts or {}
 
-  local packages = endpoints.get_apis()
+  local openapis = openapi.get_apis()
 
   require("telescope.pickers").new(opts, {
-    prompt_title = "Select a package (" .. conf.get_selected_env() .. ")",
+    prompt_title = "Select an API",
     finder = require("telescope.finders").new_table {
-      results = packages,
+      results = openapis,
       entry_maker = function(entry)
         return {
           value = entry,
@@ -33,7 +33,7 @@ M.select_api = function(opts)
         end
 
         conf.set_selected_api(selection.value.name)
-        db.set_default("package", conf.get_selected_api())
+        db.set_default("api", conf.get_selected_api())
       end)
 
       map('n', 't', actions.telescope_test_api)

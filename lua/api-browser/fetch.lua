@@ -45,11 +45,15 @@ function M.fetch_and_display(fetchUrl, opts)
     vim.api.nvim_buf_call(buf, function()
       vim.api.nvim_put(result.output, "", false, false)
     end)
---    if result.status_code == 200 then
---      print("Fetched " .. fetchUrl)
---    else
---      print("Got status code " .. result.status_code .. " for " .. fetchUrl)
---    end
+    if result.status_code == 0 then
+      vim.print(vim.inspect(result))
+      vim.print("Got status code 0 for " .. fetchUrl)
+      vim.api.nvim_buf_call(buf, function()
+        vim.api.nvim_put({"Error fetching " .. fetchUrl .. ". See :messages for more info."}, "", false, false)
+      end)
+    elseif result.status_code ~= 200 then
+      vim.print("Got status code " .. result.status_code .. " for " .. fetchUrl)
+    end
     if opts.debug then
       require("api-browser.dap").stop()
     end

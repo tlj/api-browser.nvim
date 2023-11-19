@@ -1,14 +1,17 @@
 local conf = require("api-browser.config")
+local openapi = require("api-browser.openapi")
 
 local M = {}
 
-M.select_env = function(opts)
+M.select_remote_server = function(opts)
   opts = opts or {}
 
+  openapi.parse_file(conf.get_selected_api())
+
   require("telescope.pickers").new(opts, {
-    prompt_title = "Select a local environment",
+    prompt_title = "Select a remote environment",
     finder = require("telescope.finders").new_table {
-      results = conf.get_environments(),
+      results = openapi.get_servers(),
       entry_maker = function(entry)
         return {
           value = entry,
@@ -27,7 +30,7 @@ M.select_env = function(opts)
           return
         end
 
-        conf.set_selected_env(selection.value.name)
+        conf.set_selected_remote_server(selection.value.name)
       end)
       return true
     end

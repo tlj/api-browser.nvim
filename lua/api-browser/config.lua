@@ -9,6 +9,10 @@ local M = {
     env_base_urls = {},
     endpoints_url_path = '/endpoints.json',
     endpoints_file = '',
+    openapi_url_path = '/openapi.json',
+    openapi_file = '',
+    selected_server = {},
+    selected_remote_server = {},
   },
 }
 
@@ -25,46 +29,22 @@ M.get_selected_api = function()
   return M.options.selected_api
 end
 
-M.get_selected_env = function()
-  return M.options.selected_env
+M.set_selected_server = function(server)
+  db.set_default('selected_server', server)
+  M.options.selected_server = server
 end
 
-M.get_selected_remote_env = function()
-  return M.options.selected_remote_env
+M.get_selected_server = function()
+  return M.options.selected_server
 end
 
-M.endpoints_file = function()
-  return M.options.endpoints_file
+M.set_selected_remote_server = function(server)
+  db.set_default('selected_remote_server', server)
+  M.options.selected_remote_server = server
 end
 
-M.endpoints_url = function()
-  return M.selected_base_url() .. M.options.endpoints_url_path
-end
-
-M.set_selected_env = function(env)
-  M.options.selected_env = env
-  db.set_default('selected_env', env)
-end
-
-M.set_selected_remote_env = function(env)
-  M.options.selected_remote_env = env
-  db.set_default('selected_remote_env', env)
-end
-
-M.selected_base_url = function()
-  return M.options.env_base_urls[M.options.selected_env]
-end
-
-M.selected_remote_base_url = function()
-  return M.options.env_base_urls[M.options.selected_remote_env]
-end
-
-M.get_environments = function()
-  local result = {}
-  for k, v in pairs(M.options.env_base_urls or {}) do
-    table.insert(result, { name = k, url = v })
-  end
-  return result
+M.get_selected_remote_server = function()
+  return M.options.selected_remote_server
 end
 
 M.setup = function(opts)
@@ -74,17 +54,6 @@ M.setup = function(opts)
 
   for k, v in pairs(opts) do
     options[k] = v
-  end
-
-  local base_urls = os.getenv("NVIM_API_BROWSER_URLS")
-  if base_urls ~= nil then
-    for str in string.gmatch(base_urls, "([^;]+)") do
-      local split_result = {}
-      for m in string.gmatch(str, "([^=]+)") do
-        table.insert(split_result, m)
-      end
-      options.env_base_urls[split_result[1]] = split_result[2]
-    end
   end
 
   if options.keep_state then

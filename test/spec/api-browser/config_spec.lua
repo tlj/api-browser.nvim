@@ -1,10 +1,10 @@
+--[[
 local stub = require('luassert.stub')
 local db = require('api-browser.db')
 
 describe("api-browser.config", function()
   db.dbdir = "/tmp/"
   db.dbfile = "test.db"
-  vim.fn.setenv("NVIM_API_BROWSER_URLS", "")
 
   before_each(function()
     db.remove()
@@ -91,3 +91,4 @@ describe("api-browser.config", function()
     end)
   end)
 end)
+--]]

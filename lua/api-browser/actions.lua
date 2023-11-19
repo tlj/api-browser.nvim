@@ -3,6 +3,7 @@ local Job = require('plenary.job')
 local fetch = require("api-browser.fetch")
 local conf = require("api-browser.config")
 local utils = require("api-browser.utils")
+local openapi = require("api-browser.openapi")
 
 local M = {}
 
@@ -18,7 +19,7 @@ function M.telescope_test_api(buf)
     return
   end
 
-  vim.notify("Testing " .. selection.value.package .. " " .. selection.value.version)
+  vim.notify("Testing " .. selection.value.name)
 end
 
 function M.telescope_test_endpoint(buf)
@@ -112,7 +113,8 @@ function M.telescope_select_endpoint(buf, opts)
   end
 
   local selected = selection.value.url
-  for _, idPlaceHolder in pairs(selection.value.placeholders or {}) do
+  local placeholders = string.gmatch(selected, "{(.-)}")
+  for idPlaceHolder in placeholders do
     local idInput = vim.fn.input(idPlaceHolder .. ": ")
     selected = string.gsub(selected, "{" .. idPlaceHolder .. "}", idInput)
   end
@@ -123,7 +125,8 @@ function M.telescope_select_endpoint(buf, opts)
     require("api-browser.dap").start()
   end
 
-  local base_url = conf.selected_base_url()
+  local server_env = conf.get_selected_server()
+  local base_url = openapi.get_server(server_env)
   local nbuf = utils.new_or_existing_buffer(base_url .. selected, 'botright vnew')
   local fetchUrl = base_url .. selected
 
@@ -148,7 +151,6 @@ function M.telescope_select_endpoint(buf, opts)
     ':lua require("api-browser.actions").test_endpoint("' .. selected .. '", {})<cr>',
     {}
   )
-
   if opts.debug then
     vim.defer_fn(function()
       fetch.fetch_and_display(base_url .. selected, vim.tbl_extend("force", opts, {buf = nbuf}))
