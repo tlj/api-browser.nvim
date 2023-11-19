@@ -44,6 +44,10 @@ local required_executables = {
     name = "xmllint",
     url = "[xmllint](https://gnomes.pages.gitlab.gnome.org/libxml2/xmllint.html)",
   },
+  {
+    name = "yq",
+    url = "[yq](https://github.com/mikefarah/yq/)",
+  },
 }
 
 M.check = function()

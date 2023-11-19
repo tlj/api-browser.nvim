@@ -4,15 +4,8 @@ local M = {
   options = {
     keep_state = true,
     selected_api = '',
-    selected_env = 'dev',
-    selected_remote_env = 'prod',
-    env_base_urls = {},
-    endpoints_url_path = '/endpoints.json',
-    endpoints_file = '',
-    openapi_url_path = '/openapi.json',
-    openapi_file = '',
-    selected_server = {},
-    selected_remote_server = {},
+    selected_server = '',
+    selected_remote_server = '',
   },
 }
 

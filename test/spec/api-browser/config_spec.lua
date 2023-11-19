@@ -1,4 +1,3 @@
---[[
 local stub = require('luassert.stub')
 local db = require('api-browser.db')
 
@@ -14,22 +13,6 @@ describe("api-browser.config", function()
     db.remove()
   end)
 
-  describe("has a dev and prod base url", function()
-    local module = require("api-browser.config")
-    it("has dev url", function()
-      module.setup({
-        env_base_urls = {
-          dev = "https://localhost",
-        },
-        selected_env = 'dev'
-      })
-
-      assert.is_same({dev = "https://localhost"}, module.options.env_base_urls)
-      assert.equals("https://localhost", module.selected_base_url())
-      assert.is_nil(module.selected_remote_base_url())
-    end)
-  end)
-
   describe("takes base_url from env and config", function()
     local module = require("api-browser.config")
 
@@ -41,54 +24,19 @@ describe("api-browser.config", function()
       os.getenv:revert()
     end)
 
-    it("gets staging env from os env", function()
-      os.getenv.on_call_with("NVIM_API_BROWSER_URLS").returns("staging=https://staging")
-      module.setup({env_base_urls={}, selected_env='dev'})
-      assert.is_same({staging = "https://staging"}, module.options.env_base_urls)
-    end)
-
-    it("returns a full endpoint url", function()
-      module.setup({env_base_urls={dev="https://localhost",nonprod="https://nonprod"}})
-      module.set_selected_env("nonprod")
-      assert.equals("https://nonprod/endpoints.json", module.endpoints_url())
-    end)
-
-    it("returns a full endpoint url, with custom endpoints path", function()
-      module.setup({env_base_urls={dev="https://localhost",nonprod="https://nonprod"}, endpoints_url_path = "/endpoints/routes.json" })
-      module.set_selected_env("nonprod")
-      assert.equals("https://nonprod/endpoints/routes.json", module.endpoints_url())
-    end)
-
-    it("returns a full endpoint url, with custom endpoints path, without selecting env", function()
-      module.setup({env_base_urls={dev="https://localhost",nonprod="https://nonprod"}, endpoints_url_path = "/endpoints/routes.json", env = "nonprod" })
-      assert.equals("https://nonprod/endpoints/routes.json", module.endpoints_url())
-    end)
-
-    it("merges base_url env from options and env", function()
-      os.getenv.on_call_with("NVIM_API_BROWSER_URLS").returns("staging=https://staging")
-      module.setup({env_base_urls={dev="https://localhost"}, selected_env='dev'})
-      assert.is_same({dev = "https://localhost", staging = "https://staging"}, module.options.env_base_urls)
-      local envs = module.get_environments()
-      table.sort(envs, function(a, b)
-        return a.name < b.name
-      end)
-      assert.same({{name = "dev", url = "https://localhost"}, {name = "staging", url = "https://staging"}}, envs)
-    end)
-
     it("remembers env", function()
       module.setup()
-      assert.equals("dev", module.get_selected_env())
-      assert.equals("prod", module.get_selected_remote_env())
-      module.set_selected_env("nonprod")
-      module.set_selected_remote_env("remoteenv")
-      assert.equals("nonprod", module.get_selected_env())
-      assert.equals("remoteenv", module.get_selected_remote_env())
-      module.options.selected_env = "dev"
-      module.options.selected_remote_env = "prod"
+      assert.is.equal("", module.get_selected_server())
+      assert.is.equal("", module.get_selected_remote_server())
+      module.set_selected_server("nonprod")
+      module.set_selected_remote_server("prod")
+      assert.is.equal("nonprod", module.get_selected_server())
+      assert.is.equal("prod", module.get_selected_remote_server())
+      module.options.selected_server = "dev"
+      module.options.selected_remote_server = "review"
       module.setup()
-      assert.equals("nonprod", module.get_selected_env())
-      assert.equals("remoteenv", module.get_selected_remote_env())
+      assert.is.equal("nonprod", module.get_selected_server())
+      assert.is.equal("prod", module.get_selected_remote_server())
     end)
   end)
 end)
---]]

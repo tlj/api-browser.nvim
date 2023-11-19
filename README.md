@@ -7,17 +7,17 @@ editor.
 
 ## Features
 
-- Uses remote [endpoints.json](ENDPOINTS.md) file to get a list of all APIs and endpoints
+- Loads any openapi.yaml/json files which are in the project
 - Cache recent endpoints, APIs and base url options in sqlite database for
   persistency
 - Quickly access recent URLs 
-- Switch between backend base URLs 
-- API selector to quickly switch between APIs 
+- Switch between the servers defined in the selected OpenAPI spec
+- API selector to quickly switch between OpenAPIs available in the workspace
 - Select from endpoints which match the replacement requirements under the
   cursor 
-- Load endpoint from 2 first base urls in separate windows with scoll lock, for
+- Load endpoint from 2 selected servers in separate windows with scoll lock, for
   easy comparison
-- Load endpoint in diff view between base url 1 and 2
+- Load endpoint in diff view between server 1 and 2
 - Debug mode; Opens DAP UI and starts debugging mode on opening an endpoint
 
 ## Getting started
@@ -40,15 +40,9 @@ binaries are installed correctly.
 - [xmllint](https://gnomes.pages.gitlab.gnome.org/libxml2/xmllint.html)
   (required)
 - [curl](https://curl.se) (required)
+- [yq](https://github.com/mikefarah/yq) (required)
 
 ### Installation
-
-An environment variable is required to set the base urls, as they should be left
-out of repositories commited to github.
-
-```bash 
-$ export NVIM_API_BROWSER_URLS="https://url1.example;https://url2.example" 
-```
 
 Using [packer.nvim](https://github.com/wbthomason/packer.nvim) 
 
