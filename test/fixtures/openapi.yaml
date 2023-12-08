@@ -12,6 +12,7 @@ paths:
       summary: List all pets
       parameters:
       - "$ref": "#/components/parameters/format"
+      - "$ref": "#/components/parameters/limit"
   "/cats.{_format}":
     get:
       summary: List all cats

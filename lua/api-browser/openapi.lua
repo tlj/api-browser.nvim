@@ -47,6 +47,25 @@ M.replace_placeholder = function(endpoint, name, value, params)
   return M.replace_placeholders(rr, params)
 end
 
+M.explode_query_parameters = function(endpoint, in_params)
+  local rr = vim.deepcopy(endpoint)
+  local separator = "?"
+  local names = {}
+  for n in pairs(in_params) do table.insert(names, n) end
+  table.sort(names)
+  for _, n in ipairs(names) do
+    local p = in_params[n]
+    if p["in"] == "query" then
+      if rr.url:find("?") then
+        separator = "&"
+      end
+      rr.url = rr.url .. separator .. p.name .. "={" .. p.name .. "}"
+    end
+  end
+
+  return rr
+end
+
 M.replace_placeholders = function(endpoint, in_params)
   -- make a copy of the params since we are manipulating it
   local params = vim.deepcopy(in_params)
@@ -61,7 +80,7 @@ M.replace_placeholders = function(endpoint, in_params)
   params[fk] = nil
 
   -- if the param is not a path param, or not in the path, then go to next param
-  if fv["in"] ~= "path" or not endpoint.url:find(fv.name) then
+  if (fv["in"] ~= "path" and fv["in"] ~= "query") or not endpoint.url:find(fv.name) then
     return M.replace_placeholders(endpoint, params)
   end
 
@@ -124,7 +143,8 @@ M.parse_endpoints = function()
         requirements = {},
         replaced = {},
       }
-      local expanded = M.replace_placeholders(res, info.get.parameters or {})
+      local exploded = M.explode_query_parameters(res, info.get.parameters or {})
+      local expanded = M.replace_placeholders(exploded, info.get.parameters or {})
       for _, r in pairs(expanded) do
         table.insert(result, r)
       end
