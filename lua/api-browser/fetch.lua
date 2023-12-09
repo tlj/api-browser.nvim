@@ -6,7 +6,7 @@ local M = {}
 function M.fetch_and_display(endpointInput, opts)
   opts = opts or {}
 
-  local endpoint = {}
+  local endpoint
   if type(endpointInput) == "table" then
     endpoint = endpointInput
   else
