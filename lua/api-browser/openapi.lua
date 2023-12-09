@@ -267,7 +267,6 @@ M.parse_file = function(file_name)
     return
   end
 
-  vim.print(file_name .. "ext " .. ext)
   if ext == "yaml" or ext == "yml" then
     local filename_esc = string.gsub(file_name, "%-", "%%-")
     local cmd = string.format("yq %s --output-format json 2>&1", filename_esc)

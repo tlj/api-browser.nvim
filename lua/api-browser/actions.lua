@@ -196,16 +196,18 @@ function M.telescope_compare_endpoint(buf, opts)
   local endpoint = vim.deepcopy(selection.value)
   endpoint.url = selected
 
-  db.push_history(selected)
+  db.push_history(endpoint)
 
-  M.diff_endpoint(selected, opts)
+  M.diff_endpoint(endpoint, opts)
 end
 
 function M.diff_endpoint(endpoint, opts)
   opts = opts or {}
 
-  local remote_base_url = conf.selected_remote_base_url()
-  local base_url = conf.selected_base_url()
+  local server_env = conf.get_selected_server()
+  local base_url = openapi.get_server(server_env)
+  local remote_server_env = conf.get_selected_remote_server()
+  local remote_base_url = openapi.get_server(remote_server_env)
 
   local remote_endpoint = vim.deepcopy(endpoint)
   remote_endpoint.base_url = remote_base_url
