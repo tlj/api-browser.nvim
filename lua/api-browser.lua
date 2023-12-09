@@ -1,6 +1,14 @@
 local M = {}
 
-M.setup = require("api-browser.config").setup
+M.setup = function()
+  local config = require("api-browser.config")
+  local openapi = require("api-browser.openapi")
+  config.setup()
+
+  if config.get_selected_api() then
+    openapi.parse_file(config.get_selected_api())
+  end
+end
 
 M.select_api = require("api-browser.cmds.select_api").select_api
 M.select_server = require("api-browser.cmds.select_server").select_server
