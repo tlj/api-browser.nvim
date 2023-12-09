@@ -13,8 +13,6 @@ function M.fetch_and_display(endpointInput, opts)
     endpoint = vim.fn.json_decode(endpointInput)
   end
 
-  vim.print(vim.inspect(endpointInput))
-
   if opts.format == nil then
     opts.format = true
   end
