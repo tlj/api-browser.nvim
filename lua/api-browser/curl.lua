@@ -4,12 +4,20 @@ local utils = require('api-browser.utils')
 
 local M = {}
 
-M.fetch_async = function(url, callback)
+M.fetch_async = function(endpoint, callback)
   local headers_file = os.tmpname()
   local body_file = os.tmpname()
 
   local command = "curl"
-  local args = { "-D", headers_file, "-o", body_file, "-s", url }
+  local args = { "-D", headers_file, "-o", body_file, "-s" }
+
+  for h, v in pairs(endpoint.headers or {}) do
+    table.insert(args, "-H")
+    table.insert(args, h .. ": " .. v)
+  end
+
+  local fetchUrl = endpoint.base_url .. endpoint.url
+  table.insert(args, fetchUrl)
 
   local stdout = {}
   local stderr = {}
@@ -25,7 +33,7 @@ M.fetch_async = function(url, callback)
     end,
     on_exit = vim.schedule_wrap(function(_, exit_code)
       local headers = M.parse_headers(headers_file)
-      local output = M.format_output(url, body_file)
+      local output = M.format_output(endpoint, body_file)
 
       local result = {
         stdout = stdout,
@@ -55,18 +63,18 @@ local function get_os_command_output(cmd, cwd)
   return stdout, ret, stderr
 end
 
-M.format_output = function(url, body_file, opts)
+M.format_output = function(endpoint, body_file, opts)
   opts = opts or {}
 
   local original_body = files.lines_from(body_file)
 
   local commands = {
-    json = { "jq", ".", body_file },
-    xml = { "xmllint", "-format", body_file },
+    ["application/json"] = { "jq", ".", body_file },
+    ["application/xml"] = { "xmllint", "-format", body_file },
   }
 
-  for ext, cmd in pairs(commands) do
-    if utils.ends_with(url, ext) then
+  for ct, cmd in pairs(commands) do
+    if utils.content_type(endpoint) == ct then
       local body, ret, err = get_os_command_output(
         cmd,
         opts.cwd
@@ -79,7 +87,7 @@ M.format_output = function(url, body_file, opts)
     end
   end
 
-  vim.notify("No matching formatter found for " .. url)
+  vim.notify("No matching formatter found for " .. endpoint.url .. " content-type " .. utils.content_type(endpoint))
   return original_body
 end
 
@@ -105,6 +113,7 @@ function M.parse_headers(headers_file)
   return result
 end
 
+--[[
 function M.fetch(url, opts)
   opts = opts or {}
 
@@ -141,6 +150,7 @@ function M.fetch(url, opts)
 
   return result
 end
+--]]
 
 
 return M

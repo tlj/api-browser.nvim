@@ -12,6 +12,9 @@ local M = {
 }
 
 local function compare_endpoints(a, b)
+  if a.display_name and b.display_name then
+    return a.display_name < b.display_name
+  end
   return a.url < b.url
 end
 
@@ -130,6 +133,16 @@ M.replace_placeholders = function(endpoint, in_params)
   return result
 end
 
+M.endpoint_display_name = function(endpoint)
+  local name = endpoint.url
+
+  if endpoint.headers['Content-Type'] then
+    name = name .. " (" .. endpoint.headers['Content-Type'] .. ")"
+  end
+
+  return name
+end
+
 M.parse_endpoints = function()
   local result = {}
 
@@ -139,19 +152,34 @@ M.parse_endpoints = function()
         original_url = path,
         url = path,
         api = '',
+        display_name = path,
         placeholders = {},
         requirements = {},
         replaced = {},
+        headers = {},
       }
       local exploded = M.explode_query_parameters(res, info.get.parameters or {})
       local expanded = M.replace_placeholders(exploded, info.get.parameters or {})
       for _, r in pairs(expanded) do
-        table.insert(result, r)
+        if info.get.responses and info.get.responses["200"] then
+          for rt in pairs(info.get.responses["200"].content) do
+            local rc = vim.deepcopy(r)
+            rc.headers["Content-Type"] = rt
+            table.insert(result, rc)
+          end
+        else
+          table.insert(result, r)
+        end
       end
     end
   end
 
+  for k, v in pairs(result) do
+    result[k].display_name = M.endpoint_display_name(v)
+  end
+
   table.sort(result, compare_endpoints)
+
   return result
 end
 

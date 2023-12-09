@@ -7,8 +7,10 @@ M.select_server = require("api-browser.cmds.select_server").select_server
 M.select_remote_server = require("api-browser.cmds.select_remote_server").select_remote_server
 M.endpoint_with_urn = require("api-browser.cmds.endpoint_with_urn").endpoint_with_urn
 M.recents = require("api-browser.cmds.recents").recents
-M.update_endpoints = require("api-browser.endpoints").load
 M.endpoints = require("api-browser.cmds.endpoints").endpoints
+--[[
+M.update_endpoints = require("api-browser.endpoints").load
+--]]
 
 return M
 

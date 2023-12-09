@@ -1,3 +1,4 @@
+--[[
 local curl = require("api-browser.curl")
 local conf = require("api-browser.config")
 
@@ -227,3 +228,4 @@ M.parse_url = function(url)
 end
 
 return M
+--]]

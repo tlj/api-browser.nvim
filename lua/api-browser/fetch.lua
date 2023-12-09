@@ -3,12 +3,23 @@ local utils = require("api-browser.utils")
 
 local M = {}
 
-function M.fetch_and_display(fetchUrl, opts)
+function M.fetch_and_display(endpointInput, opts)
   opts = opts or {}
+
+  local endpoint = {}
+  if type(endpointInput) == "table" then
+    endpoint = endpointInput
+  else
+    endpoint = vim.fn.json_decode(endpointInput)
+  end
+
+  vim.print(vim.inspect(endpointInput))
 
   if opts.format == nil then
     opts.format = true
   end
+
+  local fetchUrl = endpoint.base_url .. endpoint.url
 
   local buf_name = fetchUrl --:gsub("/", "_")
   local buf = opts.buf
@@ -27,11 +38,11 @@ function M.fetch_and_display(fetchUrl, opts)
     vim.cmd('diffthis')
   end
 
-  if utils.ends_with(fetchUrl, '.xml') then
+  if utils.content_type(endpoint) == "application/xml" then
     vim.api.nvim_buf_set_option(buf, 'filetype', 'html')
   end
 
-  if utils.ends_with(fetchUrl, '.json') then
+  if utils.content_type(endpoint) == "application/json" then
     vim.api.nvim_buf_set_option(buf, 'filetype', 'json')
   end
 
@@ -60,7 +71,7 @@ function M.fetch_and_display(fetchUrl, opts)
   end
 
 --  print("Fetching " .. fetchUrl .. "... ")
-  curl.fetch_async(fetchUrl, on_exit)
+  curl.fetch_async(endpoint, on_exit)
 end
 
 return M

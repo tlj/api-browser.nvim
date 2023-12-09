@@ -42,11 +42,23 @@ describe("api-browser.openapi", function()
       assert.are.equal("/cat_or_dog/dog.xml", result[6].url)
       assert.are.equal("/cats.json", result[7].url)
       assert.are.equal("/cats.xml", result[8].url)
-      assert.are.equal("/pets.json?limit=50", result[9].url)
-      assert.are.equal("/pets.json?limit={limit}", result[10].url)
-      assert.are.equal("/pets.xml?limit=50", result[11].url)
-      assert.are.equal("/pets.xml?limit={limit}", result[12].url)
+      assert.are.equal("/pets?limit=50", result[9].url)
+      assert.are.equal("/pets?limit=50", result[10].url)
+      assert.are.equal("/pets?limit={limit}", result[11].url)
+      assert.are.same({["Content-Type"] = "application/json"}, result[11].headers)
+      assert.are.equal("/pets?limit={limit}", result[12].url)
+      assert.are.same({["Content-Type"] = "application/xml"}, result[12].headers)
     end)
+  end)
+
+  describe("endpoint name includes content type", function()
+    local endpoint = {
+      url = "/pets",
+      headers = {
+        ["Content-Type"] = "application/json"
+      },
+    }
+    assert.are.equal("/pets (application/json)", module.endpoint_display_name(endpoint))
   end)
 
   describe("refs are split", function()

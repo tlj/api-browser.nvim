@@ -35,16 +35,18 @@ function M.telescope_test_endpoint(buf)
     local idInput = vim.fn.input(idPlaceHolder .. ": ")
     selected = string.gsub(selected, "{" .. idPlaceHolder .. "}", idInput)
   end
+  local endpoint = vim.deepcopy(selection.value)
+  endpoint.url = selected
 
-  db.push_history(selected)
+  db.push_history(endpoint)
 
-  M.test_endpoint(selected)
+  M.test_endpoint(endpoint)
 end
 
-function M.test_endpoint(selected)
+function M.test_endpoint(endpoint)
   local base_url = conf.selected_base_url()
   local buf = utils.new_or_existing_buffer(
-    "api-tester " .. base_url .. selected,
+    "api-tester " .. base_url .. endpoint.url,
     'botright vnew',
     {noplaceholder = true}
   )
@@ -68,7 +70,7 @@ function M.test_endpoint(selected)
     "--config",
     "config/api-tester.yaml",
     "check",
-    base_url .. selected,
+    base_url .. endpoint.url,
     "--markdown",
   }
   if remote_base_url ~= "" then
@@ -119,7 +121,10 @@ function M.telescope_select_endpoint(buf, opts)
     selected = string.gsub(selected, "{" .. idPlaceHolder .. "}", idInput)
   end
 
-  db.push_history(selected)
+  local endpoint = vim.deepcopy(selection.value)
+  endpoint.url = selected
+
+  db.push_history(endpoint)
 
   if opts.debug then
     require("api-browser.dap").start()
@@ -128,36 +133,37 @@ function M.telescope_select_endpoint(buf, opts)
   local server_env = conf.get_selected_server()
   local base_url = openapi.get_server(server_env)
   local nbuf = utils.new_or_existing_buffer(base_url .. selected, 'botright vnew')
-  local fetchUrl = base_url .. selected
+  endpoint.base_url = base_url
 
   vim.api.nvim_buf_set_keymap(
     nbuf,
     'n',
     'r',
-    ':lua require("api-browser.fetch").fetch_and_display("' .. fetchUrl .. '", {})<cr>',
+    ':lua require("api-browser.fetch").fetch_and_display("' .. vim.fn.json_encode(endpoint) .. '", {})<cr>',
     {}
   )
   vim.api.nvim_buf_set_keymap(
     nbuf,
     'n',
     'd',
-    ':lua require("api-browser.actions").diff_endpoint("' .. selected .. '", {})<cr>',
+    ':lua require("api-browser.actions").diff_endpoint("' .. vim.fn.json_encode(endpoint) .. '", {})<cr>',
     {}
   )
   vim.api.nvim_buf_set_keymap(
     nbuf,
     'n',
     't',
-    ':lua require("api-browser.actions").test_endpoint("' .. selected .. '", {})<cr>',
+    ':lua require("api-browser.actions").test_endpoint("' .. vim.fn.json_encode(endpoint) .. '", {})<cr>',
     {}
   )
+
   if opts.debug then
     vim.defer_fn(function()
-      fetch.fetch_and_display(base_url .. selected, vim.tbl_extend("force", opts, {buf = nbuf}))
+      fetch.fetch_and_display(endpoint, vim.tbl_extend("force", opts, {buf = nbuf}))
     end, 500)
   else
     vim.schedule(function()
-      fetch.fetch_and_display(base_url .. selected, vim.tbl_extend("force", opts, {buf = nbuf}))
+      fetch.fetch_and_display(endpoint, vim.tbl_extend("force", opts, {buf = nbuf}))
     end)
   end
 end
@@ -187,18 +193,25 @@ function M.telescope_compare_endpoint(buf, opts)
     end)
   end
 
+  local endpoint = vim.deepcopy(selection.value)
+  endpoint.url = selected
+
   db.push_history(selected)
 
   M.diff_endpoint(selected, opts)
 end
 
-function M.diff_endpoint(selected, opts)
+function M.diff_endpoint(endpoint, opts)
   opts = opts or {}
 
   local remote_base_url = conf.selected_remote_base_url()
   local base_url = conf.selected_base_url()
 
-  local buf1 = utils.new_or_existing_buffer(base_url .. selected, 'botright vnew')
+  local remote_endpoint = vim.deepcopy(endpoint)
+  remote_endpoint.base_url = remote_base_url
+  endpoint.base_url = base_url
+
+  local buf1 = utils.new_or_existing_buffer(endpoint.base_url .. endpoint.url, 'botright vnew')
   local win1 = vim.api.nvim_get_current_win()
   vim.api.nvim_win_set_option(win1, "scrollbind", true)
   local win1opts = {}
@@ -207,7 +220,7 @@ function M.diff_endpoint(selected, opts)
   vim.api.nvim_set_option_value("wrap", false, win1opts)
   vim.api.nvim_win_set_option(win1, "wrap", false)
 
-  local buf2 = utils.new_or_existing_buffer(remote_base_url .. selected, 'rightbelow new')
+  local buf2 = utils.new_or_existing_buffer(remote_endpoint.base_url .. remote_endpoint.url, 'rightbelow new')
   local win2 = vim.api.nvim_get_current_win()
   local win2opts = {}
   win2opts['scope'] = 'local'
@@ -216,10 +229,10 @@ function M.diff_endpoint(selected, opts)
   vim.api.nvim_win_set_option(win2, "scrollbind", true)
 
   vim.schedule(function()
-    fetch.fetch_and_display(remote_base_url .. selected, vim.tbl_extend("force", opts, {buf = buf1}))
+    fetch.fetch_and_display(remote_endpoint, vim.tbl_extend("force", opts, {buf = buf1}))
   end)
   vim.schedule(function()
-    fetch.fetch_and_display(base_url .. selected, vim.tbl_extend("force", opts, {buf = buf2}))
+    fetch.fetch_and_display(endpoint, vim.tbl_extend("force", opts, {buf = buf2}))
   end)
 end
 

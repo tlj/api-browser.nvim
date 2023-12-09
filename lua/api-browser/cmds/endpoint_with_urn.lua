@@ -23,8 +23,8 @@ M.endpoint_with_urn = function(opts)
       entry_maker = function(entry)
         return {
           value = entry,
-          display = entry.url,
-          ordinal = entry.url,
+          display = entry.display_name,
+          ordinal = entry.display_name,
         }
       end
     },

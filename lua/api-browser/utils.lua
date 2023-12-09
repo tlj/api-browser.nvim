@@ -29,6 +29,16 @@ function M.ends_with(str, ending)
   return ending == "" or str:sub(-#ending) == ending
 end
 
+function M.content_type(endpoint)
+  if endpoint.headers["Content-Type"] then
+    return endpoint.headers["Content-Type"]
+  end
+  if M.ends_with(endpoint.url, '.json') then
+    return "application/json"
+  end
+  return ""
+end
+
 function M.split_lines(body)
   local body_lines = {}
   for s in body:gmatch("[^\r\n]+") do

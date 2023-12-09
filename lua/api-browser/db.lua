@@ -14,9 +14,10 @@ function M.init()
     db = sqlite {
       uri = M.dbdir .. M.dbfile,
       entries = {
-       id = true,
-       url = "text",
-       last_used = { "timestamp", default = sqlite.lib.strftime("%s", "now") }
+        id = true,
+        name = "text",
+        endpoint = "text",
+        last_used = { "timestamp", default = sqlite.lib.strftime("%s", "now") }
       },
       defaults = {
         name = "text",
@@ -67,12 +68,12 @@ function M.get_entries()
   return db.entries:get()
 end
 
-function M.push_history(fetchUrl)
+function M.push_history(endpoint)
   M.init()
 
-  local existing = db.entries:where { url = fetchUrl }
+  local existing = db.entries:where { name = endpoint.display_name }
   if existing == nil then
-    db.entries:insert { url = fetchUrl }
+    db.entries:insert { name = endpoint.display_name, endpoint = vim.fn.json_encode(endpoint) }
   else
     local ts = os.time(os.date("*t"))
     db.entries:update {

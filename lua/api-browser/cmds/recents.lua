@@ -12,7 +12,7 @@ M.recents = function(opts)
   end)
   local urls = utils.map(entries, function(entry)
     -- return { url = row.url, last_used = row.last_used }
-    return { url = entry.url }
+    return vim.fn.json_decode(entry.endpoint)
   end)
   require("telescope.pickers").new(opts, {
     prompt_title = "",
@@ -21,8 +21,8 @@ M.recents = function(opts)
       entry_maker = function(entry)
         return {
           value = entry,
-          display = entry.url,
-          ordinal = entry.url,
+          display = entry.display_name,
+          ordinal = entry.display_name,
         }
       end
     },
