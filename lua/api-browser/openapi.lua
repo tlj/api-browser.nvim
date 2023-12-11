@@ -227,6 +227,9 @@ M.get_endpoint_by_param_pattern = function(value)
   local matching_urls = {}
   for _, r in pairs(parsed_urls) do
     for paramName, pattern in pairs(r.placeholders) do
+      if type(pattern) == "string" then
+        pattern = pattern:gsub('\\d', '%%d')
+      end
       if type(pattern) == "table" then
         for _, p in pairs(pattern) do
           if p == value then
@@ -239,17 +242,13 @@ M.get_endpoint_by_param_pattern = function(value)
             break
           end
         end
-
       elseif value:find(pattern) then
-        pattern = pattern:gsub('\\d', '%%d')
         local ec = vim.deepcopy(r)
         ec.url = ec.url:gsub("{" .. paramName .. "}", value)
         ec.display_name = ec.display_name:gsub("{" .. paramName .. "}", value)
         ec.replaced[paramName] = value
         ec.placeholders[paramName] = nil
         table.insert(matching_urls, ec)
-      else
-        vim.print(value .. " NOT matches " .. pattern)
       end
     end
   end
