@@ -36,6 +36,7 @@ describe("api-browser.openapi", function()
       assert.are.equal(12, #result)
       assert.are.equal("/cat/{catId}.json", result[1].url)
       assert.are.equal("/cat/{catId}.xml", result[2].url)
+      assert.are.same({catId = "^cat:\\d+$"}, result[2].placeholders)
       assert.are.equal("/cat_or_dog/cat.json", result[3].url)
       assert.are.equal("/cat_or_dog/cat.xml", result[4].url)
       assert.are.equal("/cat_or_dog/dog.json", result[5].url)
@@ -59,6 +60,44 @@ describe("api-browser.openapi", function()
       },
     }
     assert.are.equal("/pets (application/json)", module.endpoint_display_name(endpoint))
+  end)
+
+  describe("finds endpoints by parameter pattern match", function()
+    local value = "cat:12"
+    local matching = module.get_endpoint_by_param_pattern(value)
+
+    local expected = { 
+      {
+        api = "",
+        display_name = "/cat/cat:12.json",
+        headers = {},
+        original_url = "/cat/{catId}.{_format}",
+        placeholders = {},
+        replaced = {
+          _format = "json",
+          catId = "cat:12"
+        },
+        requirements = {},
+        url = "/cat/cat:12.json"
+      }, {
+        api = "",
+        display_name = "/cat/cat:12.xml",
+        headers = {},
+        original_url = "/cat/{catId}.{_format}",
+        placeholders = {},
+        replaced = {
+          _format = "xml",
+          catId = "cat:12"
+        },
+        requirements = {},
+        url = "/cat/cat:12.xml"
+      }
+    }
+
+
+    assert.is_not_nil(matching)
+    assert.are.same(2, #matching)
+    assert.are.same(expected, matching)
   end)
 
   describe("refs are split", function()
@@ -165,7 +204,7 @@ describe("api-browser.openapi", function()
           name = "catId",
           ["in"] = "path",
           ["schema"] = {
-            type = "integer",
+            type = "string",
           }
         },
         format = {
@@ -177,9 +216,24 @@ describe("api-browser.openapi", function()
           }
         }
       }
+      local expected = {
+        {
+          ["url"] = "/cat/{catId}.json",
+          replaced = {
+            ["_format"] = "json",
+          }
+        },
+        {
+          ["url"] = "/cat/{catId}.xml",
+          replaced = {
+            ["_format"] = "xml",
+          }
+        }
+      }
       local result = module.replace_placeholders(endpoint, defaults)
       assert.is_not_nil(result)
       assert.are.same(2, #result)
+      assert.are.same(expected, result)
     end)
   end)
 

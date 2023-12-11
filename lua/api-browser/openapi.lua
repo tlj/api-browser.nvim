@@ -31,7 +31,7 @@ M.get_apis = function()
   local workspace_esc = string.gsub(workspace, "%-", "%%-") .. "/"
   local result = {}
 
-  for _, file in ipairs(vim.fn.glob(workspace .. "**/openapi.*", true, true)) do
+  for _, file in ipairs(vim.fn.glob(workspace .. "**/*", true, true)) do
     local ext = M.get_extension(file)
     if ext == "json" or ext == "yaml" or ext == "yml" then
       table.insert(result, { name = string.gsub(file, workspace_esc, "") })
@@ -46,6 +46,7 @@ M.replace_placeholder = function(endpoint, name, value, params)
   rr.replaced = rr.replaced or {}
   rr.url = rr.url:gsub("{" .. name .."}", value)
   rr.replaced[name] = value
+  rr.placeholders[name] = nil
 
   return M.replace_placeholders(rr, params)
 end
@@ -161,10 +162,23 @@ M.parse_endpoints = function()
       local exploded = M.explode_query_parameters(res, info.get.parameters or {})
       local expanded = M.replace_placeholders(exploded, info.get.parameters or {})
       for _, r in pairs(expanded) do
-
         for _, p in pairs(info.get.parameters or {}) do
-          if p["schema"] and p["schema"].pattern then
-            r.placeholders[p.name] = p["schema"].pattern
+          if not r.replaced[p.name] then
+            if p["schema"] then
+              if p["schema"].pattern then
+                r.placeholders[p.name] = p["schema"].pattern
+              elseif p["schema"].type == "integer" and p["schema"].format == "int64" then
+                r.placeholders[p.name] = "^\\d+$"
+              elseif p["schema"].type == "string" and p["schema"].enum and type(p["schema"].enum) == "table" then
+                local pattern = {}
+
+                for _, n in pairs(p["schema"].enum) do
+                  table.insert(pattern, n)
+                end
+
+                r.placeholders[p.name] = pattern
+              end
+            end
           end
         end
 
@@ -203,16 +217,44 @@ M.get_servers = function()
   return result
 end
 
-M.get_endpoint_by_param_pattern = function(pattern)
+M.get_endpoint_by_param_pattern = function(value)
   M.parse_file(conf.get_selected_api())
   local parsed_urls = M.parse_endpoints()
   if not parsed_urls then
     parsed_urls = {}
   end
 
-  vim.print(vim.inspect(parsed_urls))
+  local matching_urls = {}
+  for _, r in pairs(parsed_urls) do
+    for paramName, pattern in pairs(r.placeholders) do
+      if type(pattern) == "table" then
+        for _, p in pairs(pattern) do
+          if p == value then
+            local ec = vim.deepcopy(r)
+            ec.url = ec.url:gsub("{" .. paramName .. "}", value)
+            ec.display_name = ec.display_name:gsub("{" .. paramName .. "}", value)
+            ec.replaced[paramName] = value
+            ec.placeholders[paramName] = nil
+            table.insert(matching_urls, ec)
+            break
+          end
+        end
 
-  return parsed_urls
+      elseif value:find(pattern) then
+        pattern = pattern:gsub('\\d', '%%d')
+        local ec = vim.deepcopy(r)
+        ec.url = ec.url:gsub("{" .. paramName .. "}", value)
+        ec.display_name = ec.display_name:gsub("{" .. paramName .. "}", value)
+        ec.replaced[paramName] = value
+        ec.placeholders[paramName] = nil
+        table.insert(matching_urls, ec)
+      else
+        vim.print(value .. " NOT matches " .. pattern)
+      end
+    end
+  end
+
+  return matching_urls
 end
 
 M.get_server = function(description)
@@ -281,8 +323,7 @@ M.parse_file = function(file_name)
   local ext = M.get_extension(file_name)
   local content = ""
 
-  if not assert(io.open(file_name, "r")) then
-    error("Unable to read file " .. file_name .. ".")
+  if file_name == "" or not vim.fn.filereadable(file_name) then
     return
   end
 

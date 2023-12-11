@@ -51,35 +51,35 @@ local required_executables = {
 }
 
 M.check = function()
-  vim.fn["health#report_start"] "Checking for required plugins"
+  vim.health.start("Checking for required plugins")
 
   for _, p in pairs(required_plugins) do
     if lualib_installed(p.name) then
-      vim.fn["health#report_ok"](p.url .. " is installed.")
+      vim.health.ok(p.url .. " is installed.")
     else
-      vim.fn["health#report_error"](p.url .. " not found.")
+      vim.health.error(p.url .. " not found.")
     end
   end
 
-  vim.fn["health#report_start"] "Checking for optional plugins"
+  vim.health.start "Checking for optional plugins"
   for _, p in pairs(optional_plugins) do
     if lualib_installed(p.name) then
-      vim.fn["health#report_ok"](p.url .. " is installed.")
+      vim.health.ok(p.url .. " is installed.")
     else
-      vim.fn["health#report_error"](p.url .. " not found.")
+      vim.health.error(p.url .. " not found.")
     end
   end
 
-  vim.fn["health#report_start"] "Checking for required executables"
+  vim.health.start "Checking for required executables"
   for _, e in pairs(required_executables) do
     if vim.fn.executable(e.name) == 0 then
-      vim.fn["health#report_error"](e.url .. " not found.")
+      vim.health.error(e.url .. " not found.")
     else
       local handle = io.popen(e.name .. " --version 2>&1")
       local result = handle:read "*a"
       handle:close()
       local version = vim.split(result, "\n")[1]
-      vim.fn["health#report_ok"](e.url .. " is installed (" .. version .. ").")
+      vim.health.ok(e.url .. " is installed (" .. version .. ").")
     end
   end
 end
