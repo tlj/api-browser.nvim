@@ -21,6 +21,10 @@
     {
       "description": "Development",
       "url": "http://localhost:5000/api/v3"
+    },
+    {
+      "description": "Production",
+      "url": "http://localhost:5500/api/v3"
     }
   ],
   "tags": [

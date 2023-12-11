@@ -186,12 +186,10 @@ function M.telescope_compare_endpoint(buf, opts)
   end
 
   local selected = selection.value.url
-  for _, idPlaceHolder in pairs(selection.value.placeholders or {}) do
-    vim.ui.input({
-      prompt = idPlaceHolder .. ": ",
-    }, function(idInput)
-      selected = string.gsub(selected, "{" .. idPlaceHolder .. "}", idInput)
-    end)
+  local placeholders = string.gmatch(selected, "{(.-)}")
+  for idPlaceHolder in placeholders do
+    local idInput = vim.fn.input(idPlaceHolder .. ": ")
+    selected = string.gsub(selected, "{" .. idPlaceHolder .. "}", idInput)
   end
 
   local endpoint = vim.deepcopy(selection.value)

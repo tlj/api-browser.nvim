@@ -5,18 +5,16 @@
 A [Neovim](https://neovim.io/) plugin to browse API endpoints directly in the
 editor.
 
+**BREAKING CHANGE: This plugin has moved from using the bespoke format for describing endpoints, to using OpenAPI. If you still want to use the old format, please lock nvim to using v1.0.0.**
+
 ## Features
 
-- Loads any openapi.yaml/json files which are in the project
-- Cache recent endpoints, APIs and base url options in sqlite database for
-  persistency
-- Quickly access recent URLs 
-- Switch between the servers defined in the selected OpenAPI spec
-- API selector to quickly switch between OpenAPIs available in the workspace
-- Select from endpoints which match the replacement requirements under the
-  cursor 
+- Load OpenAPIs in your workspace (:ApiBrowser open).
+- Select servers (development/remote) from the servers defined in the OpenAPI (:ApiBrowser select_local_server, :ApiBrowser select_remote_server).
+- Select and open endpoints from the selected OpenAPI and server directly in Neovim. (:ApiBrowser endpoints).
+- Browse endpoints which have parameter patterns which match the current word (:ApiBrowser endpoints_with_param).
 - Load endpoint from 2 selected servers in separate windows with scoll lock, for
-  easy comparison
+  easy diffs by hitting 'd' from normal mode when browsing endpoints.
 - Load endpoint in diff view between server 1 and 2
 - Debug mode; Opens DAP UI and starts debugging mode on opening an endpoint
 
@@ -36,26 +34,13 @@ binaries are installed correctly.
 ### Required binaries
 
 - [neovim](https://neovim.io) (required)
-- [jq](https://stedolan.github.io/jq/) (required)
+- [jq](https://stedolan.github.io/jq/) (required when fetching JSON endpoints)
 - [xmllint](https://gnomes.pages.gitlab.gnome.org/libxml2/xmllint.html)
-  (required)
+  (required when fetching XML endpoints)
 - [curl](https://curl.se) (required)
-- [yq](https://github.com/mikefarah/yq) (required)
+- [yq](https://github.com/mikefarah/yq) (required for loading yaml files)
 
 ### Installation
-
-Using [packer.nvim](https://github.com/wbthomason/packer.nvim) 
-
-```lua 
-use { 
-	"tlj/api-browser.nvim", 
-	{ 
-		"kkharji/sqlite.lua",
-		"nvim-lua/plenary.nvim", 
-		"nvim-telescope/telescope.nvim", 
-	} 
-} 
-```
 
 Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 
@@ -112,38 +97,38 @@ automatically.
 ```vim 
 " Select the environment which should be used by default, and as the 
 " target environment for diff view
-:ApiBrowserSelectLocalServer
+:ApiBrowser select_local_server
 
 " Select the environment which should be used as the source environment
 " for the diff view
-:ApiBrowserSelectRemoteServer
+:ApiBrowser select_remote_server
 
 " Select an OpenAPI to use when using the endpoints selector. 
-:ApiBrowserOpen
+:ApiBrowser open
 
 " Select from a list of endpoints valid for the API. If an endpoint 
 " has a placeholder, the user will be prompted to enter a value. 
-:ApiBrowserEndpoints 
+:ApiBrowser endpoints
 
 " Select from a list of recently used endpoints. The endpoint is 
 " not remembered by base url, so it can be used to quickly open 
 " the same endpoint across different base urls. 
-:ApiBrowserRecents 
+:ApiBrowser recents
 
 " Look up current API endpoints with a placeholder with requirements 
 " matching the text the cursor is currently on. 
-:ApiBrowserGoto 
+:ApiBrowser endpoints_with_param
 
 ### Suggested mappings
 
 ```vim 
 require('api-browser').setup() 
-vim.keymap.set('n', '<leader>sg', '<cmd>ApiBrowserGoto<cr>', {}) 
-vim.keymap.set('n', '<leader>sr', '<cmd>ApiBrowserRecents<cr>', {}) 
-vim.keymap.set('n', '<leader>se', '<cmd>ApiBrowserEndpoints<cr>', {}) 
-vim.keymap.set('n', '<leader>sa', '<cmd>ApiBrowserOpen<cr>', {}) 
-vim.keymap.set('n', '<leader>sd', '<cmd>ApiBrowserSelectEnv<cr>', {})
-vim.keymap.set('n', '<leader>sx', '<cmd>ApiBrowserSelectRemoteEnv<cr>', {})
+vim.keymap.set('n', '<leader>sg', '<cmd>ApiBrowser endpoints_with_param<cr>', {}) 
+vim.keymap.set('n', '<leader>sr', '<cmd>ApiBrowser recents<cr>', {}) 
+vim.keymap.set('n', '<leader>se', '<cmd>ApiBrowser endpoints<cr>', {}) 
+vim.keymap.set('n', '<leader>sa', '<cmd>ApiBrowser open<cr>', {}) 
+vim.keymap.set('n', '<leader>sd', '<cmd>ApiBrowser select_local_server<cr>', {})
+vim.keymap.set('n', '<leader>sx', '<cmd>ApiBrowser select_remote_server<cr>', {})
 ```
 
 ### Database location
@@ -151,5 +136,27 @@ vim.keymap.set('n', '<leader>sx', '<cmd>ApiBrowserSelectRemoteEnv<cr>', {})
 The default location for the sqlite3 database is `$XDG_DATA_HOME/nvim` (eq
 `~/.local/share/nvim/databases` on linux and MacOS).
 
+# Development
 
+## Running tests
+
+First run the prepare make command to install the test dependencies.
+
+```shell
+make prepare vendor
+```
+
+Then tests can be run with:
+
+```shell
+make test
+```
+
+## Mock OpenAPI server
+
+To test fetching endpoints from a server defined by OpenAPI, a good solution is to use the [OpenAPI mocker](https://www.npmjs.com/package/open-api-mocker).
+
+```shell
+open-api-mocker -s test/fixtures/petstore.json -w
+```
 
