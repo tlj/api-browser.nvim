@@ -1,23 +1,23 @@
 local actions = require("api-browser.actions")
 local conf = require("api-browser.config")
-local endpoints = require("api-browser.endpoints")
+local endpoints = require("api-browser.openapi")
 
 local M = {}
 
-M.endpoint_with_urn = function(opts)
+M.endpoints_with_param = function(opts)
   local node = require("nvim-treesitter.ts_utils").get_node_at_cursor()
   if node == nil then
     error("No Treesitter parser found.")
     return
   end
   local bufnr = vim.api.nvim_get_current_buf()
-  local txt = vim.treesitter.query.get_node_text(node, bufnr)
+  local txt = vim.treesitter.get_node_text(node, bufnr)
   txt = txt:gsub('"','')
 
-  local urn_endpoints = endpoints.get_endpoint_by_api_name_and_urn(conf.get_selected_api(), txt)
+  local urn_endpoints = endpoints.get_endpoint_by_param_pattern(txt)
 
   require("telescope.pickers").new(opts, {
-    prompt_title = "Endpoints for urn " .. txt .. " (" .. conf.get_selected_env() .. ")",
+    prompt_title = "Endpoints for urn " .. txt .. " (" .. conf.get_selected_server() .. ")",
     finder = require("telescope.finders").new_table {
       results = urn_endpoints,
       entry_maker = function(entry)
@@ -34,6 +34,7 @@ M.endpoint_with_urn = function(opts)
       map('n', 'c', actions.telescope_compare_endpoint)
       map('n', 'd', actions.telescope_diff_endpoint)
       map('n', 'b', actions.telescope_debug_endpoint)
+      map('n', 't', actions.telescope_test_endpoint)
 
       return true
     end

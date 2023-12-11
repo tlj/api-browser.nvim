@@ -161,6 +161,13 @@ M.parse_endpoints = function()
       local exploded = M.explode_query_parameters(res, info.get.parameters or {})
       local expanded = M.replace_placeholders(exploded, info.get.parameters or {})
       for _, r in pairs(expanded) do
+
+        for _, p in pairs(info.get.parameters or {}) do
+          if p["schema"] and p["schema"].pattern then
+            r.placeholders[p.name] = p["schema"].pattern
+          end
+        end
+
         if info.get.responses and info.get.responses["200"] then
           for rt in pairs(info.get.responses["200"].content) do
             local rc = vim.deepcopy(r)
@@ -194,6 +201,18 @@ M.get_servers = function()
   end
 
   return result
+end
+
+M.get_endpoint_by_param_pattern = function(pattern)
+  M.parse_file(conf.get_selected_api())
+  local parsed_urls = M.parse_endpoints()
+  if not parsed_urls then
+    parsed_urls = {}
+  end
+
+  vim.print(vim.inspect(parsed_urls))
+
+  return parsed_urls
 end
 
 M.get_server = function(description)

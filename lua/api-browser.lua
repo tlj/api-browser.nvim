@@ -10,10 +10,10 @@ M.setup = function()
   end
 end
 
-M.select_api = require("api-browser.cmds.select_api").select_api
-M.select_server = require("api-browser.cmds.select_server").select_server
+M.open = require("api-browser.cmds.open").open
+M.select_local_server = require("api-browser.cmds.select_local_server").select_local_server
 M.select_remote_server = require("api-browser.cmds.select_remote_server").select_remote_server
-M.endpoint_with_urn = require("api-browser.cmds.endpoint_with_urn").endpoint_with_urn
+M.endpoints_with_param = require("api-browser.cmds.endpoints_with_param").endpoints_with_param
 M.recents = require("api-browser.cmds.recents").recents
 M.endpoints = require("api-browser.cmds.endpoints").endpoints
 --[[

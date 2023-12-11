@@ -112,14 +112,14 @@ automatically.
 ```vim 
 " Select the environment which should be used by default, and as the 
 " target environment for diff view
-:ApiBrowserSelectEnv
+:ApiBrowserSelectLocalServer
 
 " Select the environment which should be used as the source environment
 " for the diff view
-:ApiBrowserSelectRemoteEnv
+:ApiBrowserSelectRemoteServer
 
-" Select an API to use when using the endpoints selector. 
-:ApiBrowserAPI 
+" Select an OpenAPI to use when using the endpoints selector. 
+:ApiBrowserOpen
 
 " Select from a list of endpoints valid for the API. If an endpoint 
 " has a placeholder, the user will be prompted to enter a value. 
@@ -134,10 +134,6 @@ automatically.
 " matching the text the cursor is currently on. 
 :ApiBrowserGoto 
 
-" Refresh the list of endpoints from the server (clear cache). 
-:ApiBrowserRefresh 
-```
-
 ### Suggested mappings
 
 ```vim 
@@ -145,8 +141,7 @@ require('api-browser').setup()
 vim.keymap.set('n', '<leader>sg', '<cmd>ApiBrowserGoto<cr>', {}) 
 vim.keymap.set('n', '<leader>sr', '<cmd>ApiBrowserRecents<cr>', {}) 
 vim.keymap.set('n', '<leader>se', '<cmd>ApiBrowserEndpoints<cr>', {}) 
-vim.keymap.set('n', '<leader>su', '<cmd>ApiBrowserRefresh<cr>', {}) 
-vim.keymap.set('n', '<leader>sa', '<cmd>ApiBrowserAPI<cr>', {}) 
+vim.keymap.set('n', '<leader>sa', '<cmd>ApiBrowserOpen<cr>', {}) 
 vim.keymap.set('n', '<leader>sd', '<cmd>ApiBrowserSelectEnv<cr>', {})
 vim.keymap.set('n', '<leader>sx', '<cmd>ApiBrowserSelectRemoteEnv<cr>', {})
 ```

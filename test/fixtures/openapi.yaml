@@ -92,6 +92,7 @@ components:
         enum:
         - cat
         - dog
+        pattern: ^(cat|dog)$
     offset:
       name: offset
       in: query

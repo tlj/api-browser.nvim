@@ -5,7 +5,7 @@ local openapi = require("api-browser.openapi")
 
 local M = {}
 
-M.select_api = function(opts)
+M.open = function(opts)
   opts = opts or {}
 
   local openapis = openapi.get_apis()

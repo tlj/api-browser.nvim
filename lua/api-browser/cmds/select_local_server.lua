@@ -3,7 +3,7 @@ local openapi = require("api-browser.openapi")
 
 local M = {}
 
-M.select_server = function(opts)
+M.select_local_server = function(opts)
   opts = opts or {}
 
   openapi.parse_file(conf.get_selected_api())
