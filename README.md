@@ -58,13 +58,12 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 	}, 
 	config = function() require("api-browser").setup() end, 
 	keys = { 
-		{ "<leader>sg", "<cmd>ApiBrowserGoto<cr>", desc = "Open API endpoints valid for replacement text on cursor." },
-		{ "<leader>sr", "<cmd>ApiBrowserRecents<cr>", desc = "Open list of recently opened API endpoints." },
-		{ "<leader>se", "<cmd>ApiBrowserEndpoints<cr>", desc = "Open list of endpoints for current API." },
-		{ "<leader>su", "<cmd>ApiBrowserRefresh<cr>", desc = "Refresh list of APIs and Endpoints." },
-		{ "<leader>sa", "<cmd>ApiBrowserAPI<cr>", desc = "Select an API." },
-    { "<leader>sd", "<cmd>ApiBrowserSelectEnv<cr>", desc = "Select environment." },
-    { "<leader>sx", "<cmd>ApiBrowserSelectRemoteEnv<cr>", desc = "Select remote environment." },
+		{ "<leader>sa", "<cmd>ApiBrowser open<cr>", desc = "Select an API." },
+    { "<leader>sd", "<cmd>ApiBrowser select_local_server<cr>", desc = "Select environment." },
+    { "<leader>sx", "<cmd>ApiBrowser select_remote_server<cr>", desc = "Select remote environment." },
+		{ "<leader>se", "<cmd>ApiBrowser endpoints<cr>", desc = "Open list of endpoints for current API." },
+		{ "<leader>sr", "<cmd>ApiBrowser recents<cr>", desc = "Open list of recently opened API endpoints." },
+		{ "<leader>sg", "<cmd>ApiBrowser endpoints_with_param<cr>", desc = "Open API endpoints valid for replacement text on cursor." },
 	}, 
 } 
 ```
