@@ -50,6 +50,44 @@
     }
   ],
   "paths": {
+    "/pets": {
+      "get": {
+        "tags": [
+          "pet"
+        ],
+        "summary": "List all pets",
+        "description": "List all pets",
+        "operationId": "listPets",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "x-count": 5,
+                  "items": {
+                    "$ref": "#/components/schemas/Pet"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "x-count": 5,
+                  "items": {
+                    "$ref": "#/components/schemas/Pet"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
     "/pet": {
       "put": {
         "tags": [
@@ -949,16 +987,19 @@
           "petId": {
             "type": "integer",
             "format": "int64",
-            "example": 198772
+            "example": 198772,
+            "x-faker": "random.numer({'min': 1, 'max': 1500000})"
           },
           "quantity": {
             "type": "integer",
             "format": "int32",
-            "example": 7
+            "example": 7,
+            "x-faker": "random.numer({'min': 1, 'max': 150})"
           },
           "shipDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "x-faker": "date.recent"
           },
           "status": {
             "type": "string",
@@ -971,7 +1012,8 @@
             ]
           },
           "complete": {
-            "type": "boolean"
+            "type": "boolean",
+            "x-faker": "datatype.boolean"
           }
         },
         "xml": {
@@ -984,11 +1026,13 @@
           "id": {
             "type": "integer",
             "format": "int64",
-            "example": 100000
+            "example": 100000,
+            "x-faker": "random.numer({'min': 1, 'max': 1500000})"
           },
           "username": {
             "type": "string",
-            "example": "fehguy"
+            "example": "fehguy",
+            "x-faker": "inernet.displayName"
           },
           "address": {
             "type": "array",
@@ -1035,11 +1079,13 @@
           "id": {
             "type": "integer",
             "format": "int64",
-            "example": 1
+            "example": 1,
+            "x-faker": "random.numer({'min': 1, 'max': 150})"
           },
           "name": {
             "type": "string",
-            "example": "Dogs"
+            "example": "Dogs",
+            "x-faker": "animal.cat"
           }
         },
         "xml": {
@@ -1056,19 +1102,23 @@
           },
           "username": {
             "type": "string",
-            "example": "theUser"
+            "example": "theUser",
+            "x-faker": "internet.displayName"
           },
           "firstName": {
             "type": "string",
-            "example": "John"
+            "example": "John",
+            "x-faker": "name.firstName"
           },
           "lastName": {
             "type": "string",
-            "example": "James"
+            "example": "James",
+            "x-faker": "name.lastName"
           },
           "email": {
             "type": "string",
-            "example": "john@email.com"
+            "example": "john@email.com",
+            "x-faker": "internet.email"
           },
           "password": {
             "type": "string",
@@ -1076,7 +1126,8 @@
           },
           "phone": {
             "type": "string",
-            "example": "12345"
+            "example": "12345",
+            "x-faker": "phone.number"
           },
           "userStatus": {
             "type": "integer",
@@ -1097,7 +1148,8 @@
             "format": "int64"
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "x-faker": "animal.type"
           }
         },
         "xml": {
@@ -1114,11 +1166,13 @@
           "id": {
             "type": "integer",
             "format": "int64",
-            "example": 10
+            "example": 10,
+            "x-faker": "random.numer({'min': 1, 'max': 150})"
           },
           "name": {
             "type": "string",
-            "example": "doggie"
+            "example": "doggie",
+            "x-faker": "name.firstName"
           },
           "category": {
             "$ref": "#/components/schemas/Category"
@@ -1130,6 +1184,7 @@
             },
             "items": {
               "type": "string",
+              "x-faker": "internet.url",
               "xml": {
                 "name": "photoUrl"
               }
