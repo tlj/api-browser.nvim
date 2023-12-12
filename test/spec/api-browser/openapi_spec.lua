@@ -33,7 +33,7 @@ describe("api-browser.openapi", function()
     it("has all endpoints", function() 
       local result = module.parse_endpoints()
       assert.is_not.same(nil, result)
-      assert.are.equal(16, #result)
+      assert.are.equal(18, #result)
       local expected = { {
     api = "",
     display_name = "/pet/findByStatus?status=available (application/json)",
@@ -134,6 +134,28 @@ describe("api-browser.openapi", function()
     replaced = {},
     requirements = {},
     url = "/pet/{petId}"
+  }, {
+    api = "",
+    display_name = "/pets (application/json)",
+    headers = {
+      ["Content-Type"] = "application/json"
+    },
+    original_url = "/pets",
+    placeholders = {},
+    replaced = {},
+    requirements = {},
+    url = "/pets"
+  }, {
+    api = "",
+    display_name = "/pets (application/xml)",
+    headers = {
+      ["Content-Type"] = "application/xml"
+    },
+    original_url = "/pets",
+    placeholders = {},
+    replaced = {},
+    requirements = {},
+    url = "/pets"
   }, {
     api = "",
     display_name = "/store/inventory (application/json)",
