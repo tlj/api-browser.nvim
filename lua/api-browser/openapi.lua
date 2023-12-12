@@ -31,9 +31,8 @@ M.get_apis = function()
   local workspace_esc = string.gsub(workspace, "%-", "%%-") .. "/"
   local result = {}
 
-  for _, file in ipairs(vim.fn.glob(workspace .. "**/*", true, true)) do
-    local ext = M.get_extension(file)
-    if ext == "json" or ext == "yaml" or ext == "yml" then
+  for _, pattern in ipairs(conf.options.patterns or {}) do
+    for _, file in ipairs(vim.fn.glob(workspace .. pattern, true, true)) do
       table.insert(result, { name = string.gsub(file, workspace_esc, "") })
     end
   end
@@ -44,6 +43,7 @@ end
 M.replace_placeholder = function(endpoint, name, value, params)
   local rr = vim.deepcopy(endpoint)
   rr.replaced = rr.replaced or {}
+  value = tostring(value)
   rr.url = rr.url:gsub("{" .. name .."}", value)
   rr.replaced[name] = value
   rr.placeholders[name] = nil
@@ -93,7 +93,7 @@ M.replace_placeholders = function(endpoint, in_params)
 
   -- replace the path param with the default or enum value if it exists
   if endpoint.url:find(fv.name) and fv.schema then
-    if fv.schema.default or fv.schema.example then
+    if fv.schema.default or fv.schema.example or fv.example then
       -- if we have a default, we also add the path with placeholder
       local rd = vim.deepcopy(endpoint)
       local new = M.replace_placeholders(rd, params)
@@ -102,7 +102,7 @@ M.replace_placeholders = function(endpoint, in_params)
       end
 
       -- use example, unless default is set
-      local val = fv.schema.example
+      local val = fv.schema.example or fv.example
       if fv.schema.default then
         val = fv.schema.default
       end
@@ -137,8 +137,8 @@ end
 M.endpoint_display_name = function(endpoint)
   local name = endpoint.url
 
-  if endpoint.headers['Content-Type'] then
-    name = name .. " (" .. endpoint.headers['Content-Type'] .. ")"
+  if endpoint.headers['Accept'] then
+    name = name .. " (" .. endpoint.headers['Accept'] .. ")"
   end
 
   return name
@@ -185,7 +185,7 @@ M.parse_endpoints = function()
         if info.get.responses and info.get.responses["200"] then
           for rt in pairs(info.get.responses["200"].content) do
             local rc = vim.deepcopy(r)
-            rc.headers["Content-Type"] = rt
+            rc.headers["Accept"] = rt
             table.insert(result, rc)
           end
         else

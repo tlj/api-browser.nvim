@@ -30,8 +30,8 @@ function M.ends_with(str, ending)
 end
 
 function M.content_type(endpoint)
-  if endpoint.headers["Content-Type"] then
-    return endpoint.headers["Content-Type"]
+  if endpoint.headers["Accept"] then
+    return endpoint.headers["Accept"]
   end
   if M.ends_with(endpoint.url, '.json') then
     return "application/json"

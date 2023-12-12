@@ -56,7 +56,7 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim)
     "nvim-lua/plenary.nvim", 
     "nvim-telescope/telescope.nvim", 
 	}, 
-	config = function() require("api-browser").setup() end, 
+	config = function() require("api-browser").setup({ patterns = { "**/openapi.json" }}) end, 
 	keys = { 
 		{ "<leader>sa", "<cmd>ApiBrowser open<cr>", desc = "Select an API." },
     { "<leader>sd", "<cmd>ApiBrowser select_local_server<cr>", desc = "Select environment." },

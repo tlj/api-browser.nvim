@@ -1,9 +1,9 @@
 local M = {}
 
-M.setup = function()
+M.setup = function(opts)
   local config = require("api-browser.config")
   local openapi = require("api-browser.openapi")
-  config.setup()
+  config.setup(opts)
 
   if config.get_selected_api() then
     openapi.parse_file(config.get_selected_api())

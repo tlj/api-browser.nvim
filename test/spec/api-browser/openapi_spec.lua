@@ -38,7 +38,7 @@ describe("api-browser.openapi", function()
     api = "",
     display_name = "/pet/findByStatus?status=available (application/json)",
     headers = {
-      ["Content-Type"] = "application/json"
+      ["Accept"] = "application/json"
     },
     original_url = "/pet/findByStatus",
     placeholders = {},
@@ -51,7 +51,7 @@ describe("api-browser.openapi", function()
     api = "",
     display_name = "/pet/findByStatus?status=available (application/xml)",
     headers = {
-      ["Content-Type"] = "application/xml"
+      ["Accept"] = "application/xml"
     },
     original_url = "/pet/findByStatus",
     placeholders = {},
@@ -64,7 +64,7 @@ describe("api-browser.openapi", function()
     api = "",
     display_name = "/pet/findByStatus?status={status} (application/json)",
     headers = {
-      ["Content-Type"] = "application/json"
+      ["Accept"] = "application/json"
     },
     original_url = "/pet/findByStatus",
     placeholders = {
@@ -77,7 +77,7 @@ describe("api-browser.openapi", function()
     api = "",
     display_name = "/pet/findByStatus?status={status} (application/xml)",
     headers = {
-      ["Content-Type"] = "application/xml"
+      ["Accept"] = "application/xml"
     },
     original_url = "/pet/findByStatus",
     placeholders = {
@@ -90,7 +90,7 @@ describe("api-browser.openapi", function()
     api = "",
     display_name = "/pet/findByTags?tags={tags} (application/json)",
     headers = {
-      ["Content-Type"] = "application/json"
+      ["Accept"] = "application/json"
     },
     original_url = "/pet/findByTags",
     placeholders = {},
@@ -101,7 +101,7 @@ describe("api-browser.openapi", function()
     api = "",
     display_name = "/pet/findByTags?tags={tags} (application/xml)",
     headers = {
-      ["Content-Type"] = "application/xml"
+      ["Accept"] = "application/xml"
     },
     original_url = "/pet/findByTags",
     placeholders = {},
@@ -112,7 +112,7 @@ describe("api-browser.openapi", function()
     api = "",
     display_name = "/pet/{petId} (application/json)",
     headers = {
-      ["Content-Type"] = "application/json"
+      ["Accept"] = "application/json"
     },
     original_url = "/pet/{petId}",
     placeholders = {
@@ -125,7 +125,7 @@ describe("api-browser.openapi", function()
     api = "",
     display_name = "/pet/{petId} (application/xml)",
     headers = {
-      ["Content-Type"] = "application/xml"
+      ["Accept"] = "application/xml"
     },
     original_url = "/pet/{petId}",
     placeholders = {
@@ -138,7 +138,7 @@ describe("api-browser.openapi", function()
     api = "",
     display_name = "/pets (application/json)",
     headers = {
-      ["Content-Type"] = "application/json"
+      ["Accept"] = "application/json"
     },
     original_url = "/pets",
     placeholders = {},
@@ -149,7 +149,7 @@ describe("api-browser.openapi", function()
     api = "",
     display_name = "/pets (application/xml)",
     headers = {
-      ["Content-Type"] = "application/xml"
+      ["Accept"] = "application/xml"
     },
     original_url = "/pets",
     placeholders = {},
@@ -160,7 +160,7 @@ describe("api-browser.openapi", function()
     api = "",
     display_name = "/store/inventory (application/json)",
     headers = {
-      ["Content-Type"] = "application/json"
+      ["Accept"] = "application/json"
     },
     original_url = "/store/inventory",
     placeholders = {},
@@ -171,7 +171,7 @@ describe("api-browser.openapi", function()
     api = "",
     display_name = "/store/order/{orderId} (application/json)",
     headers = {
-      ["Content-Type"] = "application/json"
+      ["Accept"] = "application/json"
     },
     original_url = "/store/order/{orderId}",
     placeholders = {
@@ -184,7 +184,7 @@ describe("api-browser.openapi", function()
     api = "",
     display_name = "/store/order/{orderId} (application/xml)",
     headers = {
-      ["Content-Type"] = "application/xml"
+      ["Accept"] = "application/xml"
     },
     original_url = "/store/order/{orderId}",
     placeholders = {
@@ -197,7 +197,7 @@ describe("api-browser.openapi", function()
     api = "",
     display_name = "/user/login?username={username}&password={password} (application/json)",
     headers = {
-      ["Content-Type"] = "application/json"
+      ["Accept"] = "application/json"
     },
     original_url = "/user/login",
     placeholders = {},
@@ -208,7 +208,7 @@ describe("api-browser.openapi", function()
     api = "",
     display_name = "/user/login?username={username}&password={password} (application/xml)",
     headers = {
-      ["Content-Type"] = "application/xml"
+      ["Accept"] = "application/xml"
     },
     original_url = "/user/login",
     placeholders = {},
@@ -228,7 +228,7 @@ describe("api-browser.openapi", function()
     api = "",
     display_name = "/user/{username} (application/json)",
     headers = {
-      ["Content-Type"] = "application/json"
+      ["Accept"] = "application/json"
     },
     original_url = "/user/{username}",
     placeholders = {},
@@ -239,7 +239,7 @@ describe("api-browser.openapi", function()
     api = "",
     display_name = "/user/{username} (application/xml)",
     headers = {
-      ["Content-Type"] = "application/xml"
+      ["Accept"] = "application/xml"
     },
     original_url = "/user/{username}",
     placeholders = {},
@@ -257,7 +257,7 @@ describe("api-browser.openapi", function()
     local endpoint = {
       url = "/pets",
       headers = {
-        ["Content-Type"] = "application/json"
+        ["Accept"] = "application/json"
       },
     }
     assert.are.same("/pets (application/json)", module.endpoint_display_name(endpoint))
@@ -271,7 +271,7 @@ describe("api-browser.openapi", function()
       api = "",
       display_name = "/pet/findByStatus?status=pending (application/json)",
       headers = {
-        ["Content-Type"] = "application/json"
+        ["Accept"] = "application/json"
       },
       original_url = "/pet/findByStatus",
       placeholders = {},
@@ -284,7 +284,7 @@ describe("api-browser.openapi", function()
         api = "",
         display_name = "/pet/findByStatus?status=pending (application/xml)",
         headers = {
-          ["Content-Type"] = "application/xml"
+          ["Accept"] = "application/xml"
         },
         original_url = "/pet/findByStatus",
         placeholders = {},

@@ -6,6 +6,10 @@ local M = {
     selected_api = '',
     selected_server = '',
     selected_remote_server = '',
+    patterns = {
+      "**/*.yaml",
+      "**/*.json",
+    }
   },
 }
 
