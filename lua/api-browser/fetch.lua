@@ -20,7 +20,6 @@ function M.fetch_and_display(endpointInput, opts)
   local fetchUrl = endpoint.base_url .. endpoint.url
 
   local buf_name = fetchUrl
-  vim.print(buf_name)
   local buf = opts.buf
 
   if not buf then

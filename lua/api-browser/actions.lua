@@ -140,22 +140,22 @@ function M.telescope_select_endpoint(buf, opts)
     nbuf,
     'n',
     'r',
-    ':lua require("api-browser.fetch").fetch_and_display("' .. vim.fn.json_encode(endpoint) .. '", {})<cr>',
-    {}
+    ':lua require("api-browser.fetch").fetch_and_display(\'' .. vim.fn.json_encode(endpoint) .. '\', {})<cr>',
+    { silent = true }
   )
   vim.api.nvim_buf_set_keymap(
     nbuf,
     'n',
     'd',
-    ':lua require("api-browser.actions").diff_endpoint("' .. vim.fn.json_encode(endpoint) .. '", {})<cr>',
-    {}
+    ':lua require("api-browser.actions").diff_endpoint(\'' .. vim.fn.json_encode(endpoint) .. '\', {diff=true})<cr>',
+    { silent = true }
   )
   vim.api.nvim_buf_set_keymap(
     nbuf,
     'n',
     't',
-    ':lua require("api-browser.actions").test_endpoint("' .. vim.fn.json_encode(endpoint) .. '", {})<cr>',
-    {}
+    ':lua require("api-browser.actions").test_endpoint(\'' .. vim.fn.json_encode(endpoint) .. '\', {})<cr>',
+    { silent = true}
   )
 
   if opts.debug then
@@ -202,6 +202,10 @@ end
 
 function M.diff_endpoint(endpoint, opts)
   opts = opts or {}
+
+  if type(endpoint) == "string" then
+    endpoint = vim.fn.json_decode(endpoint)
+  end
 
   local server_env = conf.get_selected_server()
   local base_url = openapi.get_server(server_env)
