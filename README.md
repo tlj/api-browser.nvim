@@ -18,6 +18,10 @@ editor.
 - Load endpoint in diff view between server 1 and 2
 - Debug mode; Opens DAP UI and starts debugging mode on opening an endpoint
 
+## Demo
+
+![](./demo.gif)
+
 ## Getting started
 
 Use `:checkhealth api-browser` to verify that all required plugins and
