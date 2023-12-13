@@ -27,13 +27,27 @@ M.get_extension = function(file_name)
 end
 
 M.get_apis = function()
-  local workspace = vim.fn.getcwd()
-  local workspace_esc = string.gsub(workspace, "%-", "%%-") .. "/"
   local result = {}
+  if vim.fn.executable("rg") ~= 0 then
+    local cmd = conf.options.ripgrep.command
+    if conf.options.ripgrep.no_ignore then
+      cmd = cmd .. " --no-ignore "
+    end
+    local ripgrep_result = vim.fn.system(cmd)
+    if not ripgrep_result then
+      return {}
+    end
+    for s in ripgrep_result:gmatch("[^\r\n]+") do
+      table.insert(result, { name = s })
+    end
+  else
+    local workspace = vim.fn.getcwd()
+    local workspace_esc = string.gsub(workspace, "%-", "%%-") .. "/"
 
-  for _, pattern in ipairs(conf.options.patterns or {}) do
-    for _, file in ipairs(vim.fn.glob(workspace .. pattern, true, true)) do
-      table.insert(result, { name = string.gsub(file, workspace_esc, "") })
+    for _, pattern in ipairs(conf.options.ripgrep.fallback_globs or {}) do
+      for _, file in ipairs(vim.fn.glob(workspace .. pattern, true, true)) do
+        table.insert(result, { name = string.gsub(file, workspace_esc, "") })
+      end
     end
   end
 

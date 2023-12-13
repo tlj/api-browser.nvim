@@ -48,6 +48,10 @@ local required_executables = {
     name = "yq",
     url = "[yq](https://github.com/mikefarah/yq/)",
   },
+  {
+    name = "rg",
+    url = "[rg](https://github.com/BurntSushi/ripgrep)",
+  },
 }
 
 M.check = function()

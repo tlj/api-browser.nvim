@@ -43,6 +43,7 @@ binaries are installed correctly.
   (required when fetching XML endpoints)
 - [curl](https://curl.se) (required)
 - [yq](https://github.com/mikefarah/yq) (required for loading yaml files)
+- [rg](https://github.com/BurntSushi/ripgrep) (required for finding OpenAPI files more reliably)
 
 ### Installation
 
@@ -56,7 +57,9 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim)
     "nvim-lua/plenary.nvim",
     "nvim-telescope/telescope.nvim",
   },
-  config = function() require("api-browser").setup({ patterns = { "**/openapi.json" }}) end,
+  config = function() 
+    require("api-browser").setup() 
+  end,
   keys = {
     { "<leader>sa", "<cmd>ApiBrowser open<cr>", desc = "Select an API." },
     { "<leader>sd", "<cmd>ApiBrowser select_local_server<cr>", desc = "Select environment." },
@@ -65,6 +68,23 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim)
     { "<leader>sr", "<cmd>ApiBrowser recents<cr>", desc = "Open list of recently opened API endpoints." },
     { "<leader>sg", "<cmd>ApiBrowser endpoints_with_param<cr>", desc = "Open API endpoints valid for replacement text on cursor." },
   },
+}
+```
+
+### Configuration
+
+**api-browser.nvim** comes with the following defaults:
+
+```lua
+{
+  keep_state = true, -- store state in sqlite db
+  ripgrep = {
+    -- if ripgrep is installed, use this command to find OpenAPI files
+    command = 'rg -l -g \'*.yaml\' -g \'*.json\' -e "openapi.*3"',
+    no_ignore = false, -- set --no-ignore for ripgrep to search everything, use this in case you have your openapis in .gitignore
+    -- if ripgrep is not installed, use globs to find matching files
+    fallback_globs = { "**/*.yaml", "**/*.json" }, 
+  }
 }
 ```
 
