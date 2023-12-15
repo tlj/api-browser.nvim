@@ -15,11 +15,13 @@ function M.init()
       uri = M.dbdir .. M.dbfile,
       entries = {
         id = true,
+        workspace = "text",
         name = "text",
         endpoint = "text",
         last_used = { "timestamp", default = sqlite.lib.strftime("%s", "now") }
       },
       defaults = {
+        workspace = "text",
         name = "text",
         value = "text",
       }
@@ -32,24 +34,24 @@ function M.remove()
   db = {}
 end
 
-function M.set_default(name, value)
+function M.set_default(workspace, name, value)
   M.init()
 
-  local existing = db.defaults:where { name = name }
+  local existing = db.defaults:where { workspace = workspace, name = name }
   if existing == nil then
-    db.defaults:insert { name = name, value = value }
+    db.defaults:insert { workspace = workspace, name = name, value = value }
   else
     db.defaults:update {
-      where = { name = name },
+      where = { workspace = workspace, name = name },
       set = { value = value },
     }
   end
 end
 
-function M.get_default(name)
+function M.get_default(workspace, name)
   M.init()
 
-  local val = db.defaults:where { name = name }
+  local val = db.defaults:where { workspace = workspace, name = name }
   if val == nil then
     return nil
   end
@@ -57,23 +59,23 @@ function M.get_default(name)
   return val.value
 end
 
-function M.clear_cache()
+function M.clear_cache(workspace)
   M.init()
-  db.entries:remove()
+  db.entries:remove { workspace = workspace }
 end
 
-function M.get_entries()
+function M.get_entries(workspace)
   M.init()
 
-  return db.entries:get()
+  return db.entries:get({ workspace = workspace }) or {}
 end
 
-function M.push_history(endpoint)
+function M.push_history(workspace, endpoint)
   M.init()
 
-  local existing = db.entries:where { name = endpoint.display_name }
+  local existing = db.entries:where { workspace = workspace, name = endpoint.display_name }
   if existing == nil then
-    db.entries:insert { name = endpoint.display_name, endpoint = vim.fn.json_encode(endpoint) }
+    db.entries:insert { workspace = workspace, name = endpoint.display_name, endpoint = vim.fn.json_encode(endpoint) }
   else
     local ts = os.time(os.date("*t"))
     db.entries:update {

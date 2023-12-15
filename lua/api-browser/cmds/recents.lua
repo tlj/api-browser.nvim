@@ -1,4 +1,5 @@
 local db = require("api-browser.db")
+local conf = require("api-browser.config")
 local utils = require("api-browser.utils")
 local actions = require("api-browser.actions")
 
@@ -6,12 +7,11 @@ local M = {}
 
 M.recents = function(opts)
   opts = opts or {}
-  local entries = db.get_entries()
+  local entries = db.get_entries(conf.workspace)
   table.sort(entries, function (k1, k2)
     return k1.last_used > k2.last_used
   end)
   local urls = utils.map(entries, function(entry)
-    -- return { url = row.url, last_used = row.last_used }
     return vim.fn.json_decode(entry.endpoint)
   end)
   require("telescope.pickers").new(opts, {
