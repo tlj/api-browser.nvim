@@ -38,7 +38,7 @@ function M.telescope_test_endpoint(buf)
   local endpoint = vim.deepcopy(selection.value)
   endpoint.url = selected
 
-  db.push_history(endpoint)
+  db.push_history(conf.workspace, endpoint)
 
   M.test_endpoint(endpoint)
 end
@@ -125,7 +125,7 @@ function M.telescope_select_endpoint(buf, opts)
   endpoint.url = selected
   endpoint.display_name = openapi.endpoint_display_name(endpoint)
 
-  db.push_history(endpoint)
+  db.push_history(conf.workspace, endpoint)
 
   if opts.debug then
     require("api-browser.dap").start()
@@ -195,7 +195,7 @@ function M.telescope_compare_endpoint(buf, opts)
   local endpoint = vim.deepcopy(selection.value)
   endpoint.url = selected
 
-  db.push_history(endpoint)
+  db.push_history(conf.workspace, endpoint)
 
   M.diff_endpoint(endpoint, opts)
 end

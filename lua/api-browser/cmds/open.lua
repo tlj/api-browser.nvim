@@ -33,7 +33,7 @@ M.open = function(opts)
         end
 
         conf.set_selected_api(selection.value.name)
-        db.set_default("api", conf.get_selected_api())
+        db.set_default(conf.workspace, "api", conf.get_selected_api())
       end)
 
       map('n', 't', actions.telescope_test_api)
