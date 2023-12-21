@@ -1,5 +1,8 @@
-*api-browser.txt* API Browser
+================================================================================
+INTRODUCTION                                                  *api-browser.nvim*
 
 api-browser.nvim is a plugin for previewing API endpoints directly in nvim.
 
 
+
+ vim:tw=78:ts=8:ft=help:norl:

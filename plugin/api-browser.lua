@@ -7,19 +7,18 @@
 -- vim.api.nvim_create_user_command("ApiBrowserRefresh", require("api-browser").refresh_endpoints, {})
 
 vim.api.nvim_create_user_command("ApiBrowser", function(opts)
-  require("api-browser.cmd").load_command(unpack(opts.fargs))
+	require("api-browser.cmd").load_command(unpack(opts.fargs))
 end, {
-  nargs = 1,
-  complete = function(_, _, _)
-    return {
-      "open",
-      "select_local_server",
-      "select_remote_server",
-      "recents",
-      "endpoints",
-      "endpoints_with_param",
-      -- "refresh_endpoints",
-    }
-  end,
+	nargs = 1,
+	complete = function(_, _, _)
+		return {
+			"open",
+			"select_local_server",
+			"select_remote_server",
+			"recents",
+			"endpoints",
+			"endpoints_with_param",
+			-- "refresh_endpoints",
+		}
+	end,
 })
-

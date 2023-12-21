@@ -1,13 +1,16 @@
 local M = {}
 
 M.setup = function(opts)
-  local config = require("api-browser.config")
-  local openapi = require("api-browser.openapi")
-  config.setup(opts)
+	local config = require("api-browser.config")
+	local curl = require("api-browser.curl")
+	local openapi = require("api-browser.openapi")
 
-  if config.get_selected_api() then
-    openapi.parse_file(config.get_selected_api())
-  end
+	config.setup(opts)
+	curl.options = config.options.curl
+
+	if config.get_selected_api() then
+		openapi.parse_file(config.get_selected_api())
+	end
 end
 
 M.open = require("api-browser.cmds.open").open
@@ -16,9 +19,5 @@ M.select_remote_server = require("api-browser.cmds.select_remote_server").select
 M.endpoints_with_param = require("api-browser.cmds.endpoints_with_param").endpoints_with_param
 M.recents = require("api-browser.cmds.recents").recents
 M.endpoints = require("api-browser.cmds.endpoints").endpoints
---[[
-M.update_endpoints = require("api-browser.endpoints").load
---]]
 
 return M
-
