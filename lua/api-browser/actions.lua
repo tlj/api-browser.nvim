@@ -124,6 +124,7 @@ function M.telescope_select_endpoint(buf, opts)
 	local endpoint = vim.deepcopy(selection.value)
 	endpoint.url = selected
 	endpoint.display_name = openapi.endpoint_display_name(endpoint)
+	endpoint.placeholders = {}
 
 	db.push_history(conf.workspace, endpoint)
 
